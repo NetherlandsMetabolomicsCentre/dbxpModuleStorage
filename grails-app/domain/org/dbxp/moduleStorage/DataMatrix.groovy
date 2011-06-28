@@ -2,14 +2,18 @@ package org.dbxp.moduleStorage
 
 class DataMatrix {
 
-    // TODO: add reference to original filename/upload date
+    def dateCreated
+    def lastUpdated
 
     def fileContents = []
+    def uploadedFileName = ""
     def headerRowNumber = 0
     def sampleColumn = 0
-    def rows
-    def columns
+    def rows = 0
+    def columns = 0
 
     static constraints = {
     }
+
+    static mapWith = "mongo"
 }

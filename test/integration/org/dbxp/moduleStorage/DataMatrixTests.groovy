@@ -22,43 +22,70 @@ class DataMatrixTests extends GroovyTestCase {
 
         t = new Date()
 
-        matrix.save()
+        // insert a dynamic property for query testing purposes
+        matrix['someDynamicProperty'] = true
+
+
+        matrix.save(flush: true) // flush because otherwise the data will not be persisted because this is run inside a test transaction which is rolled back afterwards
 
         println 'Saving matrix took ' + (new Date().time - t.time)/1000 + ' seconds.'
 
-        t = new Date()
+//        t = new Date()
+//
+//        // assume sample names are in first column
+//        def sampleNames = dataMatrixService.getDataFromColumn(matrix, 0)
+//
+//        // make some samples based on the sample names from the file
+//        def samples = sampleNames.collect { sampleName ->
+//            new Sample(name: sampleName)
+//        }
+//
+//        // get all header cells excluding the first which belongs to sample
+//        def dataColumnHeaders = dataMatrixService.getHeaderRow(matrix)[1..-1]
+//
+//        // get all data cells excluding those from the 'sample' column
+//        def dataColumns = dataMatrixService.getDataColumns(matrix)
+//
+//        println 'Creating samples + retreiving data took ' + (new Date().time - t.time)/1000 + ' seconds.'
+//
+//        t = new Date()
+//
+//        samples.eachWithIndex { sample, sampleIndex ->
+//
+//            dataColumnHeaders.eachWithIndex { columnHeader, columnIndex ->
+//
+//                if (columnHeader)
+//                    sample[columnHeader] = dataColumns[columnIndex][sampleIndex]
+//
+//            }
+//
+//            sample.save(flush: true)
+//        }
+//
+//        println 'Adding data to samples and saving took ' + (new Date().time - t.time)/1000 + ' seconds.'
+    }
 
-        // assume sample names are in first column
-        def sampleNames = dataMatrixService.getDataFromColumn(matrix, 0)
+    void testQueries() {
 
-        // make some samples based on the sample names from the file
-        def samples = sampleNames.collect { sampleName ->
-            new Sample(name: sampleName)
-        }
+        // you can easily query mongofied entities by a fixed property name
+        def matrix = DataMatrix.findByUploadedFileName('testData/DiogenesMockData.txt')
 
-        // get all header cells excluding the first which belongs to sample
-        def dataColumnHeaders = dataMatrixService.getHeaderRow(matrix)[1..-1]
+        assert matrix
 
-        // get all data cells excluding those from the 'sample' column
-        def dataColumns = dataMatrixService.getDataColumns(matrix)
+        def matrix2
 
-        println 'Creating samples + retreiving data took ' + (new Date().time - t.time)/1000 + ' seconds.'
+        // these dynamic finders even work for dynamic properties!
+        matrix2 = DataMatrix.findBySomeDynamicProperty(true)
 
-        t = new Date()
+        assert matrix2
 
-        samples.eachWithIndex { sample, sampleIndex ->
+        assert matrix.id == matrix2.id
 
-            dataColumnHeaders.eachWithIndex { columnHeader, columnIndex ->
+        def someData = dataMatrixService.getDataFromColumn(matrix, 1)
 
-                if (columnHeader)
-                    sample[columnHeader] = dataColumns[columnIndex][sampleIndex]
+        println "We've got some data: $someData"
+        println "The sum is: ${someData.sum()}"
 
-            }
-
-            sample.save(flush: true)
-        }
-
-        println 'Adding data to samples and saving took ' + (new Date().time - t.time)/1000 + ' seconds.'
     }
 
     void testLoad() {

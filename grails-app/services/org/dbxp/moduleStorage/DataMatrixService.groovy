@@ -25,6 +25,8 @@ class DataMatrixService {
             throw new Exception("Could not read file: $filePath.")
         }
 
+        dataMatrix.uploadedFileName = filePath
+
         // check whether all rows have equal length
         if ( (stringValues*.size().unique()).size() > 1) {
             throw new Exception("Error importing file: every row should have the same number of columns.")
@@ -38,14 +40,17 @@ class DataMatrixService {
             throw new Exception("Error importing file: file should have at least two rows and two columns. Rows: $dataMatrix.rows columns: $dataMatrix.columns.")
         }
 
-        // try to convert values to double (or leave as strings) and assign
-        // values to the data matrix
-        dataMatrix.fileContents = stringValues.collect{ row ->
+//        // try to convert values to double (or leave as strings) and assign
+//        // values to the data matrix
+//        dataMatrix.fileContents = stringValues.collect{ row ->
+//
+//            row.collect { String stringValue ->
+//                stringValue.isDouble() ? stringValue.toDouble() : stringValue
+//            }
+//        }
 
-            row.collect { String stringValue ->
-                stringValue.isDouble() ? stringValue.toDouble() : stringValue
-            }
-        }
+        // keep the data as Strings, no conversion (for now)
+        dataMatrix.fileContents = stringValues
 
         dataMatrix
     }
