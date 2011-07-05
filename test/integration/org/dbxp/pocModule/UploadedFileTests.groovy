@@ -1,8 +1,8 @@
-package org.dbxp.moduleStorage
+package org.dbxp.pocModule
 
-class DataMatrixTests extends GroovyTestCase {
+class UploadedFileTests extends GroovyTestCase {
 
-    def dataMatrixService
+    def parsedFileService
 
     protected void setUp() {
         super.setUp()
@@ -16,7 +16,7 @@ class DataMatrixTests extends GroovyTestCase {
 
         def t = new Date()
 
-        def matrix = dataMatrixService.importTabDelimitedFile('testData/DiogenesMockData.txt')
+        def matrix = parsedFileService.importTabDelimitedFile('testData/DiogenesMockData.txt')
 
         println 'Loading file took ' + (new Date().time - t.time)/1000 + ' seconds.'
 
@@ -68,29 +68,31 @@ class DataMatrixTests extends GroovyTestCase {
     void testQueries() {
 
         // you can easily query mongofied entities by a fixed property name
-        def matrix = DataMatrix.findByUploadedFileName('testData/DiogenesMockData.txt')
+        def matrix = UploadedFile.findByUploadedFileName('testData/DiogenesMockData.txt')
 
         assert matrix
 
         def matrix2
 
         // these dynamic finders even work for dynamic properties!
-        matrix2 = DataMatrix.findBySomeDynamicProperty(true)
+        matrix2 = UploadedFile.findBySomeDynamicProperty(true)
 
         assert matrix2
 
         assert matrix.id == matrix2.id
 
-        def someData = dataMatrixService.getDataFromColumn(matrix, 1)
+        def someData = parsedFileService.getDataFromColumn(matrix, 1)
 
         println "We've got some data: $someData"
-        println "The sum is: ${someData.sum()}"
+        println "The sum is: ${someData*.toDouble().sum()}"
+
+
 
     }
 
     void testLoad() {
 
-        def matrix = DataMatrix.get(1)
+        def matrix = UploadedFile.get(1)
 
         println matrix.fileContents
 

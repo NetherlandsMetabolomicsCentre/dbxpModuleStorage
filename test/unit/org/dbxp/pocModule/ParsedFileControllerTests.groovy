@@ -1,8 +1,8 @@
-package org.dbxp.moduleStorage
+package org.dbxp.pocModule
 
 import grails.test.*
 
-class DataMatrixControllerTests extends ControllerUnitTestCase {
+class ParsedFileControllerTests extends ControllerUnitTestCase {
     protected void setUp() {
         super.setUp()
     }
