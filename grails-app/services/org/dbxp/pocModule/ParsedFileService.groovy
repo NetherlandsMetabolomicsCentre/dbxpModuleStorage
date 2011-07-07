@@ -1,6 +1,6 @@
 package org.dbxp.pocModule
 
-import org.dbxp.matriximporter.CsvReader
+import org.dbxp.matriximporter.MatrixImporter
 
 class ParsedFileService {
 
@@ -12,24 +12,21 @@ class ParsedFileService {
      * @param filePath path to the file to import
      * @return ParsedFile
      */
-    ParsedFile parseUploadedFile(UploadedFile uploadedFile) {
+    ParsedFile parseUploadedFile(UploadedFile uploadedFile, Map hints = [:]) {
 
-//        def matrix = MatrixImporter.instance.importFile(new ByteArrayInputStream(uploadedFile.bytes) as File)
+        def matrix = MatrixImporter.instance.importByteArray(uploadedFile.bytes, hints)
 
-        String s = new InputStreamReader(new ByteArrayInputStream (uploadedFile.bytes)).readLines().join('\n')
+        // check whether all rows have equal length
+        if ( (matrix*.size().unique()).size > 1) {
+            throw new Exception("Error importing file: every row should have the same number of columns.")
+        }
 
-        def matrix = new CsvReader().parse(s, [:])
-
-// This is made obsolete because MatrixImporter pads with empty strings
-//        // check whether all rows have equal length
-//        if ( (matrix*.size.unique()).size > 1) {
-//            throw new Exception("Error importing file: every row should have the same number of columns.")
-//        }
+        if (!matrix) return null
 
         ParsedFile parsedFile = new ParsedFile(
                 matrix:     matrix,
                 rows:       matrix.size,
-                columns:    matrix[0].size
+                columns:    matrix[0].size()
         )
 
         // check whether dimensions are at least 2x2

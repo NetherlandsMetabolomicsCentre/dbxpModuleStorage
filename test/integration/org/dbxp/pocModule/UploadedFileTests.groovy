@@ -17,7 +17,12 @@ class UploadedFileTests extends GroovyTestCase {
 
         def file            = new File('testData/DiogenesMockData_mini.txt')
         def uploadedFile    = uploadedFileService.createUploadedFileFromFile(file)
-        def parsedFile      = parsedFileService.parseUploadedFile(uploadedFile)
+
+        assert uploadedFile
+
+        def parsedFile      = parsedFileService.parseUploadedFile(uploadedFile, [delimiter: '\t'])
+
+        assert parsedFile
 
         // flush because otherwise the data will not be persisted because this
         // is run inside a test transaction which is rolled back afterwards
