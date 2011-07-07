@@ -24,7 +24,7 @@ class ParsedFile {
 
     // a list of column indices that will not be exposed to the outside (e.g.
     // via REST calls)
-    Integer[] ignoredDataColumns
+    Integer[] ignoredDataColumns = []
 
     static constraints = {
     }

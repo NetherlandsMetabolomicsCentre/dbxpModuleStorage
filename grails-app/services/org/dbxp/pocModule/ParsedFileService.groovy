@@ -1,5 +1,7 @@
 package org.dbxp.pocModule
 
+import org.dbxp.matriximporter.CsvReader
+
 class ParsedFileService {
 
     static transactional = 'mongo'
@@ -10,27 +12,19 @@ class ParsedFileService {
      * @param filePath path to the file to import
      * @return ParsedFile
      */
-    // TODO: change this to make use of Roberts matrixImporter
-    ParsedFile importTabDelimitedFile(UploadedFile uploadedFile) {
+    ParsedFile parseUploadedFile(UploadedFile uploadedFile) {
 
-        // TODO: make constructor that takes an uploadedFile
+//        def matrix = MatrixImporter.instance.importFile(new ByteArrayInputStream(uploadedFile.bytes) as File)
 
-        def matrix = []
+        String s = new InputStreamReader(new ByteArrayInputStream (uploadedFile.bytes)).readLines().join('\n')
 
-        try {
-            new ByteArrayInputStream(uploadedFile.bytes).eachLine { line ->
+        def matrix = new CsvReader().parse(s, [:])
 
-                matrix << line.split('\t')
-
-            }
-        } catch (e) {
-            throw new Exception("Error occured while parsing contents file: ${uploadedFile.name}.")
-        }
-
-        // check whether all rows have equal length
-        if ( (matrix*.size.unique()).size > 1) {
-            throw new Exception("Error importing file: every row should have the same number of columns.")
-        }
+// This is made obsolete because MatrixImporter pads with empty strings
+//        // check whether all rows have equal length
+//        if ( (matrix*.size.unique()).size > 1) {
+//            throw new Exception("Error importing file: every row should have the same number of columns.")
+//        }
 
         ParsedFile parsedFile = new ParsedFile(
                 matrix:     matrix,

@@ -6,7 +6,7 @@ class UploadedFile {
     def lastUpdated
 
     // TODO: should be of type org.dbxp.moduleBase.User
-    def owner
+    def owner = null
 
     // file name that was uploaded, stripped of path
     String name = ""
@@ -37,6 +37,8 @@ class UploadedFile {
     ParsedFile parsedFile
 
     static constraints = {
+        owner(nullable: true)
+        parsedFile(nullable: true)
     }
 
     static mapWith = "mongo"

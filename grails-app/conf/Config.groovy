@@ -22,3 +22,6 @@ log4j = {
 
     warn   'org.mortbay.log'
 }
+
+// Default to throw exception on failed save (tests don't respect this setting)
+grails.gorm.failOnError = true
