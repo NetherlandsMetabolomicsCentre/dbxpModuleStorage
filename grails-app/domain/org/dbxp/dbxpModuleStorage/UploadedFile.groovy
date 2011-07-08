@@ -1,12 +1,14 @@
-package org.dbxp.pocModule
+package org.dbxp.dbxpModuleStorage
+
+import org.dbxp.moduleBase.Assay
+import org.dbxp.moduleBase.User
 
 class UploadedFile {
 
     def dateCreated
     def lastUpdated
 
-    // TODO: should be of type org.dbxp.moduleBase.User
-    def owner = null
+    User uploader // the 'owner' of the file. The keyword 'owner' is reserved in some database systems.
 
     // file name that was uploaded, stripped of path
     String name = ""
@@ -31,14 +33,17 @@ class UploadedFile {
      */
     String fileType = ''
 
-
-    // reference to org.dbxp.pocModule.ParsedFile instance, will be null
+    // reference to org.dbxp.dbxpModuleStorage.ParsedFile instance, will be null
     // when fileType == '' or fileType == 'unknown'
     ParsedFile parsedFile
 
+    // an associated assay
+    Assay assay
+
     static constraints = {
-        owner(nullable: true)
-        parsedFile(nullable: true)
+        uploader    (nullable: true)
+        parsedFile  (nullable: true)
+        assay       (nullable: true)
     }
 
     static mapWith = "mongo"

@@ -1,4 +1,4 @@
-package org.dbxp.pocModule
+package org.dbxp.dbxpModuleStorage
 
 class UploadedFileTests extends GroovyTestCase {
 
