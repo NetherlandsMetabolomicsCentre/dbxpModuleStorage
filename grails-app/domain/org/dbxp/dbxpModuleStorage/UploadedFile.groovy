@@ -1,6 +1,5 @@
 package org.dbxp.dbxpModuleStorage
 
-import org.dbxp.moduleBase.Assay
 import org.dbxp.moduleBase.User
 
 class UploadedFile {
@@ -38,7 +37,7 @@ class UploadedFile {
     ParsedFile parsedFile
 
     // an associated assay
-    Assay assay
+    AssayWithUploadedFile assay
 
     static constraints = {
         uploader    (nullable: true)

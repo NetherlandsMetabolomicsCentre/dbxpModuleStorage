@@ -4,6 +4,18 @@ class UploadedFileService {
 
     static transactional = 'mongo'
 
+    def handleUploadedFileWithPath(String path) {
+
+        File uploadedFile = new File(path)
+
+        if (uploadedFile.canRead()) {
+            createUploadedFileFromFile(uploadedFile)
+        }
+
+        new UploadedFile().save()
+
+    }
+
     /**
      * Reads a file and returns an instance of UploadedFile.
      *
