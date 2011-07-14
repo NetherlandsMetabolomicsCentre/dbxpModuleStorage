@@ -8,8 +8,6 @@ class UploadedFileController {
 
     def uploadFinished = {
 
-        println 'Entered uploadFinished...'
-
         // render something to satisfy caller
         render ''
 

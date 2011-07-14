@@ -9,10 +9,8 @@ class UploadedFileService {
         File uploadedFile = new File(path)
 
         if (uploadedFile.canRead()) {
-            createUploadedFileFromFile(uploadedFile)
+            createUploadedFileFromFile(uploadedFile).save()
         }
-
-        new UploadedFile().save()
 
     }
 
@@ -35,7 +33,7 @@ class UploadedFileService {
 
     ArrayList getUploadedFilesForUser(user) {
 
-        // TODO: implement logic to return files uploaded by current user as well as uploaded files connected to readable assays
+        // TODO: implement logic to return files uploaded by current user as well as uploaded files connected to readable assays, something like this:
 
 //        UploadedFile.findAllByUploader(user)
 
