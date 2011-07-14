@@ -32,4 +32,20 @@ class UploadedFileService {
         )
 
     }
+
+    ArrayList getUploadedFilesForUser(user) {
+
+        // TODO: implement logic to return files uploaded by current user as well as uploaded files connected to readable assays
+
+//        UploadedFile.findAllByUploader(user)
+
+//        // make this one query to find by user AND non-zero uploadFile_id at once
+//        def readableAssaysWithUploadedFiles = assayService.getAssaysReadableByUser(user).findAll {it.uploadedFile_id}
+
+//        readableAssaysWithUploadedFiles*.uploadFile
+
+        // for now, simply return all uploaded files
+        UploadedFile.all
+
+    }
 }
