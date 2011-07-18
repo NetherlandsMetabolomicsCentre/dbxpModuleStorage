@@ -4,7 +4,7 @@ import grails.converters.JSON
 
 class RestController {
 
-    def assayService
+    def assayWithUploadedFileService
     def parsedFileService
 
     /**
@@ -44,7 +44,7 @@ class RestController {
 
         def assay = getAssay(params, response)
 
-        def measurements = assayService.getMeasurements(assay)
+        def measurements = assayWithUploadedFileService.getMeasurements(assay)
 
         render measurements as JSON
 
@@ -158,16 +158,16 @@ class RestController {
         // TODO: either implement 'verbose' option or remove it from specs
 
         def assay = getAssay(params, response)
-        ParsedFile parsedFile = assayService.getParsedFileFromAssay(assay)
+        ParsedFile parsedFile = assayWithUploadedFileService.getParsedFileFromAssay(assay)
 
         if (!parsedFile) {
             response.sendError(400, "Assay with token: \"$params.assayToken\" has no measurement data.")
             return
         }
 
-        def sampleTokens                = assayService.getSampleTokensForSamplesWithDataFromAssay(assay, params.sampleTokens)
+        def sampleTokens                = assayWithUploadedFileService.getSampleTokensForSamplesWithDataFromAssay(assay, params.sampleTokens)
         def requestedMeasurementTokens  = params.measurementToken instanceof String ? [params.measurementToken] : params.measurementTokens
-        def measurementTokens           = parsedFileService.getMeasurementNames(parsedFile).findAll { it in requestedMeasurementTokens }
+        def measurementTokens           = parsedFileService.getFeatureNames(parsedFile).findAll { it in requestedMeasurementTokens }
         def measurements                = parsedFileService.getDataForMeasurementTokens(parsedFile, measurementTokens).flatten()
 
 		render [sampleTokens, measurementTokens, measurements] as JSON

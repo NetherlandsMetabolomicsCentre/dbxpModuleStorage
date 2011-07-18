@@ -2,7 +2,7 @@ package org.dbxp.dbxpModuleStorage
 
 import org.dbxp.moduleBase.Sample
 
-class AssayService {
+class AssayWithUploadedFileService {
 
     static transactional = true
 
@@ -19,7 +19,7 @@ class AssayService {
 
         if (parsedFile) {
 
-            parsedFileService.getMeasurementNames parsedFile
+            parsedFileService.getFeatureNames parsedFile
 
         } else []
 

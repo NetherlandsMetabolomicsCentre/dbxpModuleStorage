@@ -1,24 +1,27 @@
 package org.dbxp.dbxpModuleStorage
 
+import com.mongodb.gridfs.GridFSDBFile
 import org.dbxp.moduleBase.User
 
 class UploadedFile {
 
+    def uploadedFileService
+    def parsedFileService
+
+    static transients = ['uploadedFileService', 'parsedFileService', 'file', 'inputStream', 'byteArrayOutputStream', 'bytes', 'fileSize']
+
     def dateCreated
     def lastUpdated
 
-    User uploader // the 'owner' of the file. The keyword 'owner' is reserved in some database systems.
+    User uploader // the 'owner' of the file. The keyword 'owner' is reserved in some database systems. TODO: change mapping instead
 
-    // file name that was uploaded, stripped of path
-    String name = ""
+    // This is a hex string representing a Mongo ObjectId
+    String file_id
 
-    // raw contents of uploaded file
-    byte[] bytes = []
-
-    // original filesize in bytes (equal to bytes.size)
-    Long fileSize = 0
+    String fileName
 
     /**
+     * TODO: change to enum?
      * File type can be any of
      * '':                      default, meaning not yet determined
      * 'unknown':               not parsable, ie. when auto-detection failed
@@ -36,13 +39,36 @@ class UploadedFile {
     // when fileType == '' or fileType == 'unknown'
     ParsedFile parsedFile
 
-    // an associated assay
     AssayWithUploadedFile assay
 
     static constraints = {
         uploader    (nullable: true)
         parsedFile  (nullable: true)
         assay       (nullable: true)
+    }
+
+    GridFSDBFile getFile() {
+        uploadedFileService.getGridFSDBFileByID(file_id)
+    }
+
+    long getFileSize() {
+        file.length
+    }
+
+    InputStream getInputStream() {
+        file.inputStream
+    }
+
+    ByteArrayOutputStream getByteArrayOutputStream() {
+        new ByteArrayOutputStream((int) fileSize) << file.inputStream
+    }
+
+    byte[] getBytes() {
+        byteArrayOutputStream.toByteArray()
+    }
+
+    ParsedFile parse(Map hints = [:]) {
+        this.parsedFile = parsedFileService.parseUploadedFile(this, hints)
     }
 
     static mapWith = "mongo"

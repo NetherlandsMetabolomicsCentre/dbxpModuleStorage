@@ -16,7 +16,7 @@ class ParsedFileService {
      */
     ParsedFile parseUploadedFile(UploadedFile uploadedFile, Map hints = [:]) {
 
-        def matrix = MatrixImporter.instance.importByteArray(uploadedFile.bytes, hints + [fileName: uploadedFile.name])
+        def matrix = MatrixImporter.instance.importInputStream(uploadedFile.inputStream, hints + [fileName: uploadedFile.fileName])
 
         // check whether all rows have equal length
         if ( (matrix*.size().unique()).size > 1) {
@@ -100,7 +100,7 @@ class ParsedFileService {
      * @param parsedFile
      * @return
      */
-    ArrayList getMeasurementNames(ParsedFile parsedFile) {
+    ArrayList getFeatureNames(ParsedFile parsedFile) {
 
         getHeaderRow(parsedFile)[getDataColumnIndices(parsedFile)]
 

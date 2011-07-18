@@ -2,7 +2,7 @@ package org.dbxp.dbxpModuleStorage
 
 import grails.test.GrailsUnitTestCase
 
-class AssayServiceTests extends GrailsUnitTestCase {
+class AssayWithUploadedFileServiceTests extends GrailsUnitTestCase {
     protected void setUp() {
         super.setUp()
     }
