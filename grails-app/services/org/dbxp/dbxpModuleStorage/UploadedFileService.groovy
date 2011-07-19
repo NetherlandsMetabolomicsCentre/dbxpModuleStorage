@@ -53,7 +53,8 @@ class UploadedFileService implements InitializingBean {
         new UploadedFile(
                 // TODO: set owner
                 file_id:        gridFSInputFile.id.toString(),
-                fileName:       gridFSInputFile.filename
+                fileName:       file.name,
+                fileSize:       file.length()
         )
 
     }
@@ -94,6 +95,4 @@ class UploadedFileService implements InitializingBean {
         uniqueUploadedFiles as List
 
     }
-
-
 }

@@ -8,10 +8,10 @@ class UploadedFile {
     def uploadedFileService
     def parsedFileService
 
-    static transients = ['uploadedFileService', 'parsedFileService', 'file', 'inputStream', 'byteArrayOutputStream', 'bytes', 'fileSize']
+    static transients = ['uploadedFileService', 'parsedFileService', 'file', 'inputStream', 'byteArrayOutputStream', 'bytes']
 
-    def dateCreated
-    def lastUpdated
+    Date dateCreated
+    Date lastUpdated
 
     User uploader // the 'owner' of the file. The keyword 'owner' is reserved in some database systems. TODO: change mapping instead
 
@@ -19,6 +19,7 @@ class UploadedFile {
     String file_id
 
     String fileName
+    long fileSize
 
     /**
      * TODO: change to enum?
@@ -51,24 +52,20 @@ class UploadedFile {
         uploadedFileService.getGridFSDBFileByID(file_id)
     }
 
-    long getFileSize() {
-        file.length
-    }
-
     InputStream getInputStream() {
-        file.inputStream
+        file?.inputStream
     }
 
     ByteArrayOutputStream getByteArrayOutputStream() {
-        new ByteArrayOutputStream((int) fileSize) << file.inputStream
+        new ByteArrayOutputStream((int) fileSize) << file?.inputStream
     }
 
     byte[] getBytes() {
-        byteArrayOutputStream.toByteArray()
+        byteArrayOutputStream?.toByteArray()
     }
 
     ParsedFile parse(Map hints = [:]) {
-        this.parsedFile = parsedFileService.parseUploadedFile(this, hints)
+        parsedFile = parsedFileService.parseUploadedFile(this, hints)
     }
 
     static mapWith = "mongo"
