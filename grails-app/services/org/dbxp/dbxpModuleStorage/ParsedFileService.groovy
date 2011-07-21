@@ -6,6 +6,8 @@ class ParsedFileService {
 
     static transactional = 'mongo'
 
+    def uploadedFileService
+
     /**
      * Parses contents of an UploadedFile instance to a ParsedFile instance.
      * The method checks whether all rows are equally long and whether the dimensions exceed 2x2.
@@ -16,7 +18,11 @@ class ParsedFileService {
      */
     ParsedFile parseUploadedFile(UploadedFile uploadedFile, Map hints = [:]) {
 
-        def matrix = MatrixImporter.instance.importInputStream(uploadedFile.inputStream, hints + [fileName: uploadedFile.fileName])
+        // This is a temporary solution untill services work again in mongo domain objects
+        def inputStream = uploadedFileService.getGridFSDBFileByID(uploadedFile.file_id).inputStream
+
+        def matrix = MatrixImporter.instance.importInputStream(inputStream, hints + [fileName: uploadedFile.fileName])
+//        def matrix = MatrixImporter.instance.importInputStream(uploadedFile.inputStream, hints + [fileName: uploadedFile.fileName])
 
         // check whether all rows have equal length
         if ( (matrix*.size().unique()).size > 1) {
