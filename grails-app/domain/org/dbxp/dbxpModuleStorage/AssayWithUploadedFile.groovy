@@ -17,5 +17,9 @@ class AssayWithUploadedFile extends Assay {
         UploadedFile.get(uploadedFile_id)
     }
 
+    def setUploadedFile(UploadedFile uploadedFile) {
+        uploadedFile_id  = uploadedFile.id
+    }
+
     static transients = ['uploadedFile']
 }

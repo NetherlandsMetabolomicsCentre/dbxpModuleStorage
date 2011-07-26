@@ -17,8 +17,8 @@ class UploadedFileTests extends GroovyTestCase {
 
     void testImport() {
 
-        def file            = new File(fileName)
-        def uploadedFile    = uploadedFileService.createUploadedFileFromFile(file)
+        def file = new File(fileName)
+        def uploadedFile = uploadedFileService.createUploadedFileFromFile(file)
 
         assert uploadedFile
 
@@ -26,7 +26,7 @@ class UploadedFileTests extends GroovyTestCase {
 
         // flush because otherwise the data will not be persisted because this
         // is run inside a test transaction which is rolled back afterwards
-        uploadedFile.save   (flush: true, failOnError: true)
+        uploadedFile.save(flush: true, failOnError: true)
 
     }
 

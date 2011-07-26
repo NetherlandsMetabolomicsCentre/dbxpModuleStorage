@@ -24,9 +24,13 @@ class ParsedFileService {
         def matrix = MatrixImporter.instance.importInputStream(inputStream, hints + [fileName: uploadedFile.fileName])
 //        def matrix = MatrixImporter.instance.importInputStream(uploadedFile.inputStream, hints + [fileName: uploadedFile.fileName])
 
+        if (!matrix) {
+            throw new RuntimeException("Error parsing file ${uploadedFile.fileName}; resulting data matrix is empty.")
+        }
+
         // check whether all rows have equal length
         if ( (matrix*.size().unique()).size > 1) {
-            throw new Exception("Error importing file: every row should have the same number of columnIndices.")
+            throw new RuntimeException("Error parsing file ${uploadedFile.fileName}; every row should have the same number of columns.")
         }
 
         if (!matrix) return null
@@ -39,7 +43,7 @@ class ParsedFileService {
 
         // check whether dimensions are at least 2x2
         if (parsedFile.rows < 2 || parsedFile.columns < 2) {
-            throw new Exception("Error importing file: file should have at least two rows and two columnIndices. Rows: $parsedFile.rows columnIndices: $parsedFile.columns.")
+            throw new RuntimeException("Error importing file: file should have at least two rows and two columns. Rows: $parsedFile.rows columns: $parsedFile.columns.")
         }
 
         parsedFile

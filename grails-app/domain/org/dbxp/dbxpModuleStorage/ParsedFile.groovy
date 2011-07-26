@@ -26,6 +26,8 @@ class ParsedFile {
     // via REST calls)
     Integer[] ignoredDataColumns = []
 
+    boolean isColumnOriented = false
+
     static constraints = {
     }
 

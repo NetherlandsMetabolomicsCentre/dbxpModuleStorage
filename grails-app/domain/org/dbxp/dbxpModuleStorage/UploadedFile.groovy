@@ -22,7 +22,7 @@ class UploadedFile {
     long fileSize
 
     /**
-     * TODO: change to enum?
+     * TODO: change to enum? Or remove completely?
      * File type can be any of
      * '':                      default, meaning not yet determined
      * 'unknown':               not parsable, ie. when auto-detection failed
@@ -68,6 +68,6 @@ class UploadedFile {
         parsedFile = parsedFileService.parseUploadedFile(this, hints)
     }
 
-    static mapWith = "mongo"
+    static mapWith = 'mongo'
 
 }

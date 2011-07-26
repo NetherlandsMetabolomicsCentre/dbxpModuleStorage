@@ -37,6 +37,8 @@ class UploadedFileService implements InitializingBean {
             createUploadedFileFromFile(uploadedFile).save()
         }
 
+        uploadedFile.delete()
+
     }
 
     /**
