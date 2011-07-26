@@ -29,16 +29,19 @@ class UploadedFileService implements InitializingBean {
 
     }
 
-    def handleUploadedFileWithPath(String path) {
+    UploadedFile handleUploadedFileWithPath(String path) {
 
-        File uploadedFile = new File(path)
+        File file = new File(path)
 
-        if (uploadedFile.canRead()) {
-            createUploadedFileFromFile(uploadedFile).save()
+        def uploadedFile
+
+        if (file.canRead()) {
+            uploadedFile = createUploadedFileFromFile(file).save()
         }
 
-        uploadedFile.delete()
+        file.delete()
 
+        uploadedFile
     }
 
     /**
@@ -54,7 +57,7 @@ class UploadedFileService implements InitializingBean {
 
         new UploadedFile(
                 // TODO: set owner
-                file_id:        gridFSInputFile.id.toString(),
+                gridFSFile_id:  gridFSInputFile.id.toString(),
                 fileName:       file.name,
                 fileSize:       file.length()
         )

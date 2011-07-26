@@ -16,7 +16,7 @@ class UploadedFile {
     User uploader // the 'owner' of the file. The keyword 'owner' is reserved in some database systems. TODO: change mapping instead
 
     // This is a hex string representing a Mongo ObjectId
-    String file_id
+    String gridFSFile_id
 
     String fileName
     long fileSize
@@ -49,7 +49,7 @@ class UploadedFile {
     }
 
     GridFSDBFile getFile() {
-        uploadedFileService.getGridFSDBFileByID(file_id)
+        uploadedFileService.getGridFSDBFileByID(gridFSFile_id)
     }
 
     InputStream getInputStream() {

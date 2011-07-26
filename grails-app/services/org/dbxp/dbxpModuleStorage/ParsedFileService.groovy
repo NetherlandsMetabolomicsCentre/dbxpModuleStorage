@@ -18,8 +18,8 @@ class ParsedFileService {
      */
     ParsedFile parseUploadedFile(UploadedFile uploadedFile, Map hints = [:]) {
 
-        // This is a temporary solution untill services work again in mongo domain objects
-        def inputStream = uploadedFileService.getGridFSDBFileByID(uploadedFile.file_id).inputStream
+        // This is a temporary solution until services work again in mongo domain objects
+        def inputStream = uploadedFileService.getGridFSDBFileByID(uploadedFile.gridFSFile_id).inputStream
 
         def matrix = MatrixImporter.instance.importInputStream(inputStream, hints + [fileName: uploadedFile.fileName])
 //        def matrix = MatrixImporter.instance.importInputStream(uploadedFile.inputStream, hints + [fileName: uploadedFile.fileName])

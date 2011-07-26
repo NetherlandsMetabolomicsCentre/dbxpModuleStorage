@@ -1,5 +1,7 @@
 package org.dbxp.dbxpModuleStorage
 
+import grails.converters.JSON
+
 class UploadedFileController {
 
     def uploadedFileService
@@ -8,11 +10,11 @@ class UploadedFileController {
 
     def uploadFinished = {
 
-        // render something to satisfy caller
-        render ''
-
         // assume files are stored in '/tmp' for now
-        uploadedFileService.handleUploadedFileWithPath("/tmp/$params.fileName")
+        def uploadedFile = uploadedFileService.handleUploadedFileWithPath("/tmp/$params.fileName")
+
+        // render info about stored uploaded file
+        render([fileName: uploadedFile.fileName, fileSize: uploadedFile.fileSize, fileId: uploadedFile.id] as JSON)
 
     }
 }
