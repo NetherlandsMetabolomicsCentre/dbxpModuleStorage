@@ -202,4 +202,14 @@ class ParsedFileService {
 
     }
 
+    ParsedFile transposeMatrix(ParsedFile parsedFile) {
+
+        parsedFile.matrix = parsedFile.matrix.transpose()
+        parsedFile.rows = parsedFile.matrix.size
+        parsedFile.columns = parsedFile.matrix[0].size()
+
+        parsedFile
+
+    }
+
 }
