@@ -14,6 +14,8 @@ grails.project.dependency.resolution = {
         grailsHome()
         grailsCentral()
 
+        mavenRepo "http://nexus.nmcdsp.org/content/repositories/releases"
+
         // uncomment the below to enable remote dependency resolution
         // from public Maven repositories
         //mavenLocal()
@@ -29,5 +31,5 @@ grails.project.dependency.resolution = {
         // runtime 'mysql:mysql-connector-java:5.1.13'
     }
 }
-grails.plugin.location.'matrixImporter' = '../matrixImporter'
-grails.plugin.location.'dbxpModuleBase' = '../dbxpModuleBase'
+//grails.plugin.location.'matrixImporter' = '../matrixImporter'
+//grails.plugin.location.'dbxpModuleBase' = '../dbxpModuleBase'
