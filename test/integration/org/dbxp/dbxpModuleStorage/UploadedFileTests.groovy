@@ -54,19 +54,6 @@ class UploadedFileTests extends GroovyTestCase {
 
     }
 
-    void testDelete() {
-
-        if (!uploadedFile.parsedFile) testImport()
-
-        def parsedFileId = uploadedFile.parsedFile.id
-
-        uploadedFile.delete(flush: true)
-
-        assert !ParsedFile.get(parsedFileId)
-
-
-    }
-
     void testMongoDynamicProperty() {
 
         def myID = 'mySuperDuperID'

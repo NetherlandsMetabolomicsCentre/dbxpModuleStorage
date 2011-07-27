@@ -9,6 +9,8 @@ class UploadedFile {
     def parsedFileService
 
     static transients = ['uploadedFileService', 'parsedFileService', 'file', 'inputStream', 'byteArrayOutputStream', 'bytes']
+    static mapWith = 'mongo'
+    static embedded = ['parsedFile']
 
     // parsedFile will be null when fileType == '' or fileType == 'unknown'
     ParsedFile parsedFile
@@ -68,16 +70,4 @@ class UploadedFile {
         throw new Exception("This method does not work because of a bug in MongoDB GORM where services do not get injected into mongo entities that are loaded from the database.")
 //        parsedFile = parsedFileService.parseUploadedFile(this, hints)
     }
-
-    def beforeDelete() {
-
-        println 'ParsedFile ' + parsedFile
-
-        parsedFile?.delete()
-
-        parsedFile = null
-    }
-
-    static mapWith = 'mongo'
-
 }

@@ -4,6 +4,7 @@ import com.mongodb.gridfs.GridFS
 import com.mongodb.gridfs.GridFSDBFile
 import com.mongodb.gridfs.GridFSInputFile
 import org.bson.types.ObjectId
+import org.dbxp.moduleBase.User
 import org.springframework.beans.factory.InitializingBean
 
 class UploadedFileService implements InitializingBean {
@@ -29,14 +30,14 @@ class UploadedFileService implements InitializingBean {
 
     }
 
-    UploadedFile handleUploadedFileWithPath(String path) {
+    UploadedFile handleUploadedFileWithPath(String path, User user) {
 
         File file = new File(path)
 
-        def uploadedFile
+        def uploadedFile = null
 
         if (file.canRead()) {
-            uploadedFile = createUploadedFileFromFile(file).save()
+            uploadedFile = createUploadedFileFromFile(file, user).save()
         }
 
         file.delete()
@@ -50,13 +51,13 @@ class UploadedFileService implements InitializingBean {
      * @param file the file to load
      * @return an UploadedFile instance
      */
-    UploadedFile createUploadedFileFromFile(File file) {
+    UploadedFile createUploadedFileFromFile(File file, User user) {
 
         GridFSInputFile gridFSInputFile = gridFS.createFile(file)
         gridFSInputFile.save()
 
         new UploadedFile(
-                // TODO: set owner
+                uploader:       user,
                 gridFSFile_id:  gridFSInputFile.id.toString(),
                 fileName:       file.name,
                 fileSize:       file.length()
