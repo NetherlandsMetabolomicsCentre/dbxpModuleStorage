@@ -59,7 +59,9 @@ class ParsedFileService {
     ArrayList getDataFromColumns(ParsedFile parsedFile, ArrayList columnIndices) {
 
         // TODO: check whether this can be more efficient
-        def transposedData = parsedFile.matrix.transpose()
+        def transposedData = parsedFile?.matrix?.transpose()
+
+        if (!transposedData) return []
 
         transposedData[columnIndices].collect{ it[(parsedFile.headerRowIndex + 1).. -1] }
 

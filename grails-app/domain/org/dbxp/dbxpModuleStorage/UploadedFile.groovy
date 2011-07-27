@@ -10,6 +10,9 @@ class UploadedFile {
 
     static transients = ['uploadedFileService', 'parsedFileService', 'file', 'inputStream', 'byteArrayOutputStream', 'bytes']
 
+    // parsedFile will be null when fileType == '' or fileType == 'unknown'
+    ParsedFile parsedFile
+
     Date dateCreated
     Date lastUpdated
 
@@ -36,10 +39,6 @@ class UploadedFile {
      */
     String fileType = ''
 
-    // reference to org.dbxp.dbxpModuleStorage.ParsedFile instance, will be null
-    // when fileType == '' or fileType == 'unknown'
-    ParsedFile parsedFile
-
     AssayWithUploadedFile assay
 
     static constraints = {
@@ -49,7 +48,8 @@ class UploadedFile {
     }
 
     GridFSDBFile getFile() {
-        uploadedFileService.getGridFSDBFileByID(gridFSFile_id)
+        throw new Exception("This method does not work because of a bug in MongoDB GORM where services do not get injected into mongo entities that are loaded from the database.")
+//        uploadedFileService.getGridFSDBFileByID(gridFSFile_id)
     }
 
     InputStream getInputStream() {
@@ -65,7 +65,17 @@ class UploadedFile {
     }
 
     ParsedFile parse(Map hints = [:]) {
-        parsedFile = parsedFileService.parseUploadedFile(this, hints)
+        throw new Exception("This method does not work because of a bug in MongoDB GORM where services do not get injected into mongo entities that are loaded from the database.")
+//        parsedFile = parsedFileService.parseUploadedFile(this, hints)
+    }
+
+    def beforeDelete() {
+
+        println 'ParsedFile ' + parsedFile
+
+        parsedFile?.delete()
+
+        parsedFile = null
     }
 
     static mapWith = 'mongo'

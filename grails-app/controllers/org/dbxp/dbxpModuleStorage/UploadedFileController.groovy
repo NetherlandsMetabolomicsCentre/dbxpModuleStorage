@@ -17,4 +17,16 @@ class UploadedFileController {
         render([fileName: uploadedFile.fileName, fileSize: uploadedFile.fileSize, fileId: uploadedFile.id] as JSON)
 
     }
+
+    def delete = {
+
+        def uploadedFile = UploadedFile.get(params.fileId)
+
+        // TODO: figure out who and when may delete what
+        if (uploadedFile.uploadedFileService == session.user) {
+            uploadedFile.delete()
+            true
+        } else false
+
+    }
 }

@@ -5,10 +5,25 @@ class UploadedFileTests extends GroovyTestCase {
     def parsedFileService
     def uploadedFileService
 
-    String fileName = 'testData/DiogenesMockData_mini.txt'
+    String fileName = 'DiogenesMockData_mini.txt'
+    String filePath = 'testData/' + fileName
+
+    static transactional = 'mongo'
+
+    UploadedFile uploadedFile
 
     protected void setUp() {
         super.setUp()
+
+        uploadedFile = UploadedFile.findByFileName(fileName)
+        if (!uploadedFile) {
+            println 'creating new UploadedFile'
+            uploadedFile = uploadedFileService.createUploadedFileFromFile(new File(filePath))
+        }
+
+        assert uploadedFile
+
+        println UploadedFile.count()
     }
 
     protected void tearDown() {
@@ -17,29 +32,54 @@ class UploadedFileTests extends GroovyTestCase {
 
     void testImport() {
 
-        def file = new File(fileName)
-        def uploadedFile = uploadedFileService.createUploadedFileFromFile(file)
+        uploadedFile.parsedFile?.delete()
 
-        assert uploadedFile
+//        assert uploadedFile.parse([delimiter: '\t']) // won't work because of mongo services bug
 
-        assert uploadedFile.parse([delimiter: '\t', fileName: fileName])
+        uploadedFile.parsedFile = parsedFileService.parseUploadedFile(uploadedFile, [delimiter: '\t'])
 
-        // flush because otherwise the data will not be persisted because this
-        // is run inside a test transaction which is rolled back afterwards
-        uploadedFile.save(flush: true, failOnError: true)
+        uploadedFile.save(failOnError: true, flush: true)
+
+        assert uploadedFile.parsedFile
 
     }
 
-    void testQueries() {
+    void testParsedDataIsStored() {
 
-        // you can easily query mongofied entities by a fixed property name
-        def uploadedFile = UploadedFile.findByFileName(fileName)
-
-        assert uploadedFile
+        assert uploadedFile.parsedFile
 
         def someData = parsedFileService.getDataFromColumn(uploadedFile.parsedFile, 1)
 
-        println "We've got some data: $someData"
+        assert someData == ['803','89','523']
+
+    }
+
+    void testDelete() {
+
+        if (!uploadedFile.parsedFile) testImport()
+
+        def parsedFileId = uploadedFile.parsedFile.id
+
+        uploadedFile.delete(flush: true)
+
+        assert !ParsedFile.get(parsedFileId)
+
+
+    }
+
+    void testMongoDynamicProperty() {
+
+        def myID = 'mySuperDuperID'
+
+        uploadedFile['platformVersionID'] = myID
+
+        assert uploadedFile['platformVersionID'] == myID
+
+        uploadedFile.save(failOnError: true)
+
+        def uploadedFile2 = UploadedFile.findByPlatformVersionID(myID)
+
+        assert uploadedFile2
 
     }
 

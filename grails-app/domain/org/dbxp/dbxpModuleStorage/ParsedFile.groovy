@@ -28,9 +28,6 @@ class ParsedFile {
 
     boolean isColumnOriented = false
 
-    static constraints = {
-    }
-
     static mapWith = "mongo"
 
 }
