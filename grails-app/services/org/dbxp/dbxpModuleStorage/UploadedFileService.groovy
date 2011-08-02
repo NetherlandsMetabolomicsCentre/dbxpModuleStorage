@@ -101,4 +101,11 @@ class UploadedFileService implements InitializingBean {
         uniqueUploadedFiles as List
 
     }
+
+    def deleteUploadedFile(UploadedFile uploadedFile) {
+
+        gridFS.remove(new ObjectId(uploadedFile.gridFSFile_id))
+        uploadedFile.delete()
+
+    }
 }

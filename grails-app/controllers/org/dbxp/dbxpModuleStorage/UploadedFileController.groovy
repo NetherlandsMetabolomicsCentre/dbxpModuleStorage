@@ -28,8 +28,10 @@ class UploadedFileController {
 
         // TODO: figure out who and when may delete what
         if (uploadedFile.uploader.id == session.user.id) {
-            uploadedFile.delete()
+
+            uploadedFileService.deleteUploadedFile(uploadedFile)
             deletionWasSuccessful = true
+            
         }
 
         render ([status: deletionWasSuccessful] as JSON)
