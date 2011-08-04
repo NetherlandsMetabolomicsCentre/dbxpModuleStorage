@@ -12,30 +12,36 @@ class UploadedFileController {
     def index = { }
 
     def uploadFinished = {
+		def fileName = request.getHeader('X-File-Name')
 
         // assume files are stored in '/tmp' for now
-        def uploadedFile = uploadedFileService.handleUploadedFileWithPath("/tmp/$params.fileName", session.user)
+        def uploadedFile = uploadedFileService.handleUploadedFileWithPath("/tmp/${fileName}", session.user)
 
         // render info about stored uploaded file
         render([fileName: uploadedFile.fileName, fileSize: uploadedFile.fileSize, fileId: uploadedFile.id] as JSON)
     }
 
     def deleteUploadedFile = {
+		def fileName 	= request.getHeader('X-File-Name')
+		def fileId 		= request.getHeader('X-File-Id')
+		def uploadedFile= UploadedFile.get(fileId)
 
-        def deletionWasSuccessful = false
+		// try to delete the file
+		try {
+			// check if user may delete this file
+			if (uploadedFile.uploader.id == session.user.id || session.user.isAdministrator) {
+				// user may delete
+				uploadedFile.delete()
 
-        def uploadedFile = UploadedFile.get(params.fileId)
-
-        // TODO: figure out who and when may delete what
-        if (uploadedFile.uploader.id == session.user.id) {
-
-            uploadedFileService.deleteUploadedFile(uploadedFile)
-            deletionWasSuccessful = true
-            
-        }
-
-        render ([status: deletionWasSuccessful] as JSON)
-
+				render ([status: 200, message: "The file '${fileName}' was deleted"] as JSON)
+			} else {
+				// user is not allowed to delete file
+				render ([status: 405, message: "The file '${fileName}' cannot be deleted as you are not the file owner, nor are you authorized to do so by the file's owner"] as JSON)
+			}
+		} catch (Exception e) {
+			// something went wrong deleting the file :S
+			render ([status: 500, message: "An error occured while trying to delete '${fileName}' (${e.getMessage()}"] as JSON)
+		}
     }
 
     def downloadUploadedFile = {
