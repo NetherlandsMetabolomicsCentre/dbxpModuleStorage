@@ -42,6 +42,7 @@ class UploadedFile {
     String fileType = ''
 
     AssayWithUploadedFile assay
+    Long platformVersionId = 0
 
     static constraints = {
         uploader    (nullable: true)

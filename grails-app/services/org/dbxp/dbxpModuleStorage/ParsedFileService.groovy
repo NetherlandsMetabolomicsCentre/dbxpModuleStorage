@@ -21,7 +21,7 @@ class ParsedFileService {
         // This is a temporary solution until services work again in mongo domain objects
         def inputStream = uploadedFileService.getGridFSDBFileByID(uploadedFile.gridFSFile_id).inputStream
 
-        def matrix = MatrixImporter.instance.importInputStream(inputStream, hints + [fileName: uploadedFile.fileName])
+        def (matrix, parseInfo) = MatrixImporter.instance.importInputStream(inputStream, hints + [fileName: uploadedFile.fileName], true)
 //        def matrix = MatrixImporter.instance.importInputStream(uploadedFile.inputStream, hints + [fileName: uploadedFile.fileName])
 
         if (!matrix) {
@@ -38,7 +38,8 @@ class ParsedFileService {
         ParsedFile parsedFile = new ParsedFile(
                 matrix:     matrix,
                 rows:       matrix.size,
-                columns:    matrix[0].size()
+                columns:    matrix[0].size(),
+                parseInfo:  parseInfo
         )
 
         // check whether dimensions are at least 2x2
@@ -63,7 +64,7 @@ class ParsedFileService {
 
         if (!transposedData) return []
 
-        transposedData[columnIndices].collect{ it[(parsedFile.headerRowIndex + 1).. -1] }
+        transposedData[columnIndices].collect{ it[(parsedFile.featureRowIndex + 1).. -1] }
 
     }
 
@@ -88,7 +89,7 @@ class ParsedFileService {
      */
     ArrayList getHeaderRow(ParsedFile parsedFile) {
 
-        parsedFile.matrix[parsedFile.headerRowIndex]
+        parsedFile.matrix[parsedFile.featureRowIndex]
 
     }
 
@@ -101,7 +102,7 @@ class ParsedFileService {
      */
     ArrayList getDataColumnIndices(ParsedFile parsedFile) {
 
-        (0..parsedFile.columns - 1) - parsedFile.sampleColumn - parsedFile.ignoredDataColumns
+        (0..parsedFile.columns - 1) - parsedFile.sampleColumnIndex - parsedFile.ignoredDataColumns
 
     }
 
@@ -149,14 +150,14 @@ class ParsedFileService {
 
     /**
      * Returns sample names from the parsed file.
-     * It does this by return the data for the column marked as 'sampleColumn'
+     * It does this by return the data for the column marked as 'sampleColumnIndex'
      *
      * @param parsedFile
      * @return
      */
     ArrayList getSampleNames(ParsedFile parsedFile) {
 
-        getDataFromColumn(parsedFile, parsedFile.sampleColumn)
+        getDataFromColumn(parsedFile, parsedFile.sampleColumnIndex)
 
     }
 
@@ -169,7 +170,7 @@ class ParsedFileService {
      */
     ArrayList getRowIndicesForSampleNames(ParsedFile parsedFile, sampleNames) {
 
-        parsedFile.matrix.findIndexValues { row -> row[parsedFile.sampleColumn] in sampleNames }
+        parsedFile.matrix.findIndexValues { row -> row[parsedFile.sampleColumnIndex] in sampleNames }
 
     }
 
@@ -209,6 +210,8 @@ class ParsedFileService {
         parsedFile.matrix = parsedFile.matrix.transpose()
         parsedFile.rows = parsedFile.matrix.size
         parsedFile.columns = parsedFile.matrix[0].size()
+
+        parsedFile.isColumnOriented = ! parsedFile.isColumnOriented
 
         parsedFile
 

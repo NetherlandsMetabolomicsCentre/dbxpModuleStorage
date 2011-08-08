@@ -56,12 +56,16 @@ class UploadedFileService implements InitializingBean {
         GridFSInputFile gridFSInputFile = gridFS.createFile(file)
         gridFSInputFile.save()
 
-        new UploadedFile(
+        def uploadedFile = new UploadedFile(
                 uploader:       user,
                 gridFSFile_id:  gridFSInputFile.id.toString(),
                 fileName:       file.name,
                 fileSize:       file.length()
         )
+
+        uploadedFile.save(failOnError: true)
+
+        uploadedFile
 
     }
 

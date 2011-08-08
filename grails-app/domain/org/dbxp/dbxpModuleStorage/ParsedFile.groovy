@@ -10,13 +10,13 @@ class ParsedFile {
     def matrix
 
     // index of the row where the header is located
-    Integer headerRowIndex = 0
+//    Integer headerRowIndex = 0
 
     // TODO: should feature row be implemented? How to combine with header row?
-//    Integer featureRowIndex = 0
+    Integer featureRowIndex = 0
 
     // index of the column containing the sample names
-    Integer sampleColumn = 0
+    Integer sampleColumnIndex = 0
 
     // size of the matrix in rows/columns
     Integer rows = 0
@@ -26,7 +26,9 @@ class ParsedFile {
     // via REST calls)
     Integer[] ignoredDataColumns = []
 
-    boolean isColumnOriented = false
+    Map parseInfo
+
+    Boolean isColumnOriented = false
 
     static mapWith = "mongo"
 
