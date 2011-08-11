@@ -11,7 +11,11 @@ class RestControllerTests extends ControllerUnitTestCase {
         super.tearDown()
     }
 
-    void testSomething() {
+    void testGetMeasurements() {
+
+    }
+
+    void testGetMeasurementData() {
 
     }
 }

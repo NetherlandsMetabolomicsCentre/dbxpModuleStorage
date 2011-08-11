@@ -30,6 +30,8 @@ class ParsedFile {
 
     Boolean isColumnOriented = false
 
+    Integer amountOfSamplesWithData = 0
+
     static mapWith = "mongo"
 
 }

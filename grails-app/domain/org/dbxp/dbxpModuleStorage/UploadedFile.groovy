@@ -24,7 +24,7 @@ class UploadedFile {
     String gridFSFile_id
 
     String fileName
-    long fileSize
+    Long fileSize
 
     /**
      * TODO: change to enum? Or remove completely?

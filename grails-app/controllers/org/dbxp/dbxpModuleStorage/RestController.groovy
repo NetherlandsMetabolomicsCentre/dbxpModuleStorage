@@ -60,21 +60,6 @@ class RestController {
 	 * @param sampleToken. Restrict the returned data to the samples specified here.
 	 * 						If this argument is not given, all samples for the measurementTokens are returned.
 	 * 						Multiple occurrences of this argument are possible.
-	 * @param boolean verbose. If this argument is not present or it's value is true, then return
-	 *                      the date in a redundant format that is easier to process.
-	 *						By default, return a more compact JSON object as follows.
-	 *
-	 * 						The list contains three elements:
-	 *
-	 *						(1) a list of sampleTokens,
-	 *						(2) a list of measurementTokens,
-	 * 						(3) a list of values.
-	 *
-	 * 						The list of values is a matrix represented as a list. Each row of the matrix
-	 * 						contains the values of a measurementToken (in the order given in the measurement
-	 * 						token list, (2)). Each column of the matrix contains the values for the sampleTokens
-	 * 						(in the order given in the list of sampleTokens, (1)).
-	 * 						(cf. example below.)
 	 *
 	 *
 	 * @return  table (as hash) with values for given samples and measurements
@@ -83,44 +68,7 @@ class RestController {
 	 * List of examples.
 	 *
 	 *
-	 * Example REST call:
-	 * http://localhost:8184/metagenomics/rest/getMeasurementData/doit?assayToken=PPSH-Glu-A
-	 *    &measurementToken=total carbon dioxide (tCO)
-	 *    &sampleToken=5_A
-	 *    &sampleToken=1_A
-	 *    &verbose=true
-	 *
-	 * Resulting JSON object:
-	 * [ {"sampleToken":"1_A","measurementToken":"total carbon dioxide (tCO)","value":28},
-	 *   {"sampleToken":"5_A","measurementToken":"total carbon dioxide (tCO)","value":29} ]
-	 *
-	 *
-	 *
-	 * Example REST call without sampleToken, without measurementToken,
-	 *    and with verbose representation:
-	 * http://localhost:8184/metagenomics/rest/getMeasurementData/dossit?assayToken=PPSH-Glu-A
-	 *    &verbose=true
-	 *
-	 * Resulting JSON object:
-	 * [ {"sampleToken":"1_A","measurementToken":"sodium (Na+)","value":139},
-	 *	 {"sampleToken":"1_A","measurementToken":"potassium (K+)","value":4.5},
-	 *	 {"sampleToken":"1_A","measurementToken":"total carbon dioxide (tCO)","value":26},
-	 *	 {"sampleToken":"2_A","measurementToken":"sodium (Na+)","value":136},
-	 *	 {"sampleToken":"2_A","measurementToken":"potassium (K+)","value":4.3},
-	 *	 {"sampleToken":"2_A","measurementToken":"total carbon dioxide (tCO)","value":28},
-	 *	 {"sampleToken":"3_A","measurementToken":"sodium (Na+)","value":139},
-	 *	 {"sampleToken":"3_A","measurementToken":"potassium (K+)","value":4.6},
-	 *	 {"sampleToken":"3_A","measurementToken":"total carbon dioxide (tCO)","value":27},
-	 *	 {"sampleToken":"4_A","measurementToken":"sodium (Na+)","value":137},
-	 *	 {"sampleToken":"4_A","measurementToken":"potassium (K+)","value":4.6},
-	 *	 {"sampleToken":"4_A","measurementToken":"total carbon dioxide (tCO)","value":26},
-	 *	 {"sampleToken":"5_A","measurementToken":"sodium (Na+)","value":133},
-	 *	 {"sampleToken":"5_A","measurementToken":"potassium (K+)","value":4.5},
-	 *	 {"sampleToken":"5_A","measurementToken":"total carbon dioxide (tCO)","value":29} ]
-	 *
-	 *
-	 *
-	 * Example REST call with default (non-verbose) view and without sampleToken:
+	 * Example REST call without sampleToken:
 	 *
 	 * Resulting JSON object:
 	 * http://localhost:8184/metagenomics/rest/getMeasurementData/query?
@@ -135,10 +83,10 @@ class RestController {
 	 *   [139,136,139,137,133,4.5,4.3,4.6,4.6,4.5,26,28,27,26,29] ]
 	 *
 	 * Explanation:
-	 * The JSON object returned by default (i.e., unless verbose is set) is an array of three arrays.
+	 * The JSON object returned is an array of three arrays.
 	 * The first nested array gives the sampleTokens for which data was retrieved.
 	 * The second nested array gives the measurementToken for which data was retrieved.
-	 * The thrid nested array gives the data for sampleTokens and measurementTokens.
+	 * The third nested array gives the data for sampleTokens and measurementTokens.
 	 *
 	 *
 	 * In the example, the matrix represents the values of the above Example and
@@ -154,8 +102,6 @@ class RestController {
 	 *
 	 */
 	def getMeasurementData = {
-
-        // TODO: either implement 'verbose' option or remove it from specs
 
         def assay = getAssay(params, response)
         ParsedFile parsedFile = assayWithUploadedFileService.getParsedFileFromAssay(assay)

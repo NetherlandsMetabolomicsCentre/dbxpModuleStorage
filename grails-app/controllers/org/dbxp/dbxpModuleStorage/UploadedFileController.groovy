@@ -31,7 +31,7 @@ class UploadedFileController {
 			// check if user may delete this file
 			if (uploadedFile.uploader.id == session.user.id || session.user.isAdministrator) {
 				// user may delete
-				uploadedFile.delete()
+                uploadedFileService.deleteUploadedFile(uploadedFile)
 
 				render ([status: 200, message: "The file '${fileName}' was deleted"] as JSON)
 			} else {
