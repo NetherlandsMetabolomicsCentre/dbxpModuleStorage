@@ -107,7 +107,7 @@ class UploadedFileService implements InitializingBean {
     }
 
     def deleteUploadedFile(UploadedFile uploadedFile) {
-        //TODO: when services work in Mongo objects, move logic to beforeDelete
+        //TODO: when services work in Mongo objects, move logic to beforeDelete (or override delete())
         gridFS.remove(new ObjectId(uploadedFile.gridFSFile_id))
         uploadedFile.delete()
 

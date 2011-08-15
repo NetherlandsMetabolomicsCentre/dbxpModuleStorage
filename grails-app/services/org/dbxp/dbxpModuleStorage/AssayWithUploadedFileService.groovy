@@ -53,9 +53,9 @@ class AssayWithUploadedFileService {
         def sampleNames = parsedFileService.getSampleNames(parsedFile)
         def sampleTokens = sampleNames.collect { String sampleName ->
 
-            Sample.findByName(sampleName).sampleToken
+            Sample.findByName(sampleName)?.sampleToken
 
-        }
+        }.findAll{it}
 
         if (requestedSampleTokens)
             sampleTokens.findAll { it in requestedSampleTokens }

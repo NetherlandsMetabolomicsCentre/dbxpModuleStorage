@@ -2,7 +2,7 @@ package org.dbxp.dbxpModuleStorage
 
 import grails.converters.JSON
 
-class RestController {
+class RestController extends org.dbxp.moduleBase.RestController{
 
     def assayWithUploadedFileService
     def parsedFileService
@@ -101,7 +101,7 @@ class RestController {
 	 * tCO		26		28		27		26		29
 	 *
 	 */
-	def getMeasurementData = {
+    def getMeasurementData = {
 
         def assay = getAssay(params, response)
         ParsedFile parsedFile = assayWithUploadedFileService.getParsedFileFromAssay(assay)
@@ -112,10 +112,10 @@ class RestController {
         }
 
         def sampleTokens                = assayWithUploadedFileService.getSampleTokensForSamplesWithDataFromAssay(assay, params.sampleTokens)
-        def requestedMeasurementTokens  = params.measurementToken instanceof String ? [params.measurementToken] : params.measurementTokens
+        def requestedMeasurementTokens  = params.measurementToken instanceof String ? [params.measurementToken] : params.measurementToken
         def measurementTokens           = parsedFileService.getFeatureNames(parsedFile).findAll { it in requestedMeasurementTokens }
         def measurements                = parsedFileService.getDataForMeasurementTokens(parsedFile, measurementTokens).flatten()
 
-		render [sampleTokens, measurementTokens, measurements] as JSON
-	}
+        render([sampleTokens, measurementTokens, measurements] as JSON)
+    }
 }
