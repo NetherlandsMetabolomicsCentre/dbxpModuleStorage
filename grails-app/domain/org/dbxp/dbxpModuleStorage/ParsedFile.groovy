@@ -26,11 +26,12 @@ class ParsedFile {
     // via REST calls)
     Integer[] ignoredDataColumns = []
 
+    //TODO: this is not generic enough, should be replaced by dynamic mongo property after mongo bug fixes
+    def amountOfSamplesWithData = 0
+
     Map parseInfo
 
     Boolean isColumnOriented = false
-
-    Integer amountOfSamplesWithData = 0
 
     static mapWith = "mongo"
 

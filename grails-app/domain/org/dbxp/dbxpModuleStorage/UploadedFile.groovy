@@ -1,7 +1,8 @@
 package org.dbxp.dbxpModuleStorage
 
-import com.mongodb.gridfs.GridFSDBFile
 import org.dbxp.moduleBase.User
+import org.dbxp.moduleBase.Assay
+import com.mongodb.gridfs.GridFSDBFile
 
 class UploadedFile {
 
@@ -41,7 +42,9 @@ class UploadedFile {
      */
     String fileType = ''
 
-    AssayWithUploadedFile assay
+    Assay assay
+
+    //TODO: this is not generic enough, should be replaced by dynamic mongo property after mongo bug fixes
     Long platformVersionId = 0
 
     static constraints = {

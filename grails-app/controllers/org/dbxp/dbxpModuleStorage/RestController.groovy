@@ -2,31 +2,11 @@ package org.dbxp.dbxpModuleStorage
 
 import grails.converters.JSON
 
-class RestController extends org.dbxp.moduleBase.RestController{
+class RestController extends org.dbxp.moduleBase.RestController {
 
-    def assayWithUploadedFileService
-    def parsedFileService
+    def restService
 
     /**
-     * Tries to get the assay requested via params.assayToken. Sends a 400 (Bad Request) if it can't be found.
-     * @param params the params map containing the assayToken
-     * @param response the response used to send an error code if needed
-     * @return The requested assay
-     */
-    private AssayWithUploadedFile getAssay(params, response) {
-
-        def assay = AssayWithUploadedFile.findByAssayToken(params.assayToken)
-
-        if (!assay) {
-            response.sendError(400, "No assay with token: \"$params.assayToken\" could be found.")
-            return
-        }
-
-        assay
-
-    }
-
-	/**
 	 * Return a list of simple assay measurements matching the querying text.
 	 *
 	 * @param assayToken
@@ -42,12 +22,9 @@ class RestController extends org.dbxp.moduleBase.RestController{
 	 */
 	def getMeasurements = {
 
-        def assay = getAssay(params, response)
-
-        def measurements = assayWithUploadedFileService.getMeasurements(assay)
+        def measurements = restService.getMeasurements(params,response)
 
         render measurements as JSON
-
 	}
 
 	/**
@@ -103,19 +80,8 @@ class RestController extends org.dbxp.moduleBase.RestController{
 	 */
     def getMeasurementData = {
 
-        def assay = getAssay(params, response)
-        ParsedFile parsedFile = assayWithUploadedFileService.getParsedFileFromAssay(assay)
+        def measurementData = restService.getMeasurementData(params, response)
 
-        if (!parsedFile) {
-            response.sendError(400, "Assay with token: \"$params.assayToken\" has no measurement data.")
-            return
-        }
-
-        def sampleTokens                = assayWithUploadedFileService.getSampleTokensForSamplesWithDataFromAssay(assay, params.sampleTokens)
-        def requestedMeasurementTokens  = params.measurementToken instanceof String ? [params.measurementToken] : params.measurementToken
-        def measurementTokens           = parsedFileService.getFeatureNames(parsedFile).findAll { it in requestedMeasurementTokens }
-        def measurements                = parsedFileService.getDataForMeasurementTokens(parsedFile, measurementTokens).flatten()
-
-        render([sampleTokens, measurementTokens, measurements] as JSON)
+        render(measurementData as JSON)
     }
 }

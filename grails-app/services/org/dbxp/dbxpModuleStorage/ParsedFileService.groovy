@@ -1,5 +1,6 @@
 package org.dbxp.dbxpModuleStorage
 
+import org.dbxp.moduleBase.Sample
 import org.dbxp.matriximporter.MatrixImporter
 
 class ParsedFileService {
@@ -55,7 +56,7 @@ class ParsedFileService {
      *
      * @param parsedFile
      * @param columnIndices
-     * @return
+     * @return columns * rows structured array
      */
     ArrayList getDataFromColumns(ParsedFile parsedFile, ArrayList columnIndices) {
 
@@ -157,7 +158,7 @@ class ParsedFileService {
      */
     ArrayList getSampleNames(ParsedFile parsedFile) {
 
-        getDataFromColumn(parsedFile, parsedFile.sampleColumnIndex)
+        getDataFromColumn(parsedFile, parsedFile?.sampleColumnIndex)
 
     }
 
@@ -197,11 +198,13 @@ class ParsedFileService {
      * @param measurementTokens
      * @return
      */
-    ArrayList getDataForSamplesNamesAndMeasurementTokens(ParsedFile parsedFile, sampleNames, measurementTokens) {
+    ArrayList getDataForSamplesTokensAndMeasurementTokens(ParsedFile parsedFile, sampleTokens, measurementTokens) {
+
+        def sampleNames = Sample.findAllBySampleTokenInList(sampleTokens)*.name
 
         def rows = getRowIndicesForSampleNames(parsedFile, sampleNames)
 
-        getDataForMeasurementTokens(parsedFile, measurementTokens)[rows]
+        getDataForMeasurementTokens(parsedFile, measurementTokens).transpose()[rows]
 
     }
 
@@ -215,6 +218,10 @@ class ParsedFileService {
 
         parsedFile
 
+    }
+
+    def sampleCount(ParsedFile parsedFile) {
+        parsedFile.rows - parsedFile.featureRowIndex - 1
     }
 
 }

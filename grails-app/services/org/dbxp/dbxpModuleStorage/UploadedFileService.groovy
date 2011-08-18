@@ -1,10 +1,11 @@
 package org.dbxp.dbxpModuleStorage
 
+import org.dbxp.moduleBase.User
+
 import com.mongodb.gridfs.GridFS
 import com.mongodb.gridfs.GridFSDBFile
 import com.mongodb.gridfs.GridFSInputFile
 import org.bson.types.ObjectId
-import org.dbxp.moduleBase.User
 import org.springframework.beans.factory.InitializingBean
 
 class UploadedFileService implements InitializingBean {
@@ -27,7 +28,6 @@ class UploadedFileService implements InitializingBean {
         def db = mongoDatastore.mongo.getDB(mongoDatastore.mappingContext.defaultDatabaseName)
 
         gridFS = new GridFS(db)
-
     }
 
     UploadedFile handleUploadedFileWithPath(String path, User user) {
@@ -66,50 +66,43 @@ class UploadedFileService implements InitializingBean {
         uploadedFile.save(failOnError: true)
 
         uploadedFile
-
     }
 
     GridFSDBFile getGridFSDBFileByID(String objectIdString) {
 
         getGridFSDBFileByID(new ObjectId(objectIdString))
-
     }
 
 
     GridFSDBFile getGridFSDBFileByID(ObjectId objectId) {
 
         gridFS.findOne(objectId)
-
     }
 
     List getFilesUploadedByUser(user) {
 
         UploadedFile.findAllByUploader(user)
-
     }
 
     List getUploadedFilesFromAssaysReadableByUser(user) {
 
-        def readableAssays                  = assayService.getAssaysReadableByUser(user)
-        def readableAssaysWithUploadedFiles = readableAssays.findAll { AssayWithUploadedFile assay -> assay.uploadedFile_id }
+        UploadedFile.findAllByAssayInList(assayService.getAssaysReadableByUser(user))
+    }
 
-        readableAssaysWithUploadedFiles.collect {
-            AssayWithUploadedFile assay -> UploadedFile.get(assay.uploadedFile_id)
-        }
+    List getUploadedFilesFromAssaysWritableByUser(user) {
 
+        UploadedFile.findAllByAssayInList(assayService.getAssaysWritableByUser(user))
     }
 
     List getUploadedFilesForUser(user) {
 
-        Set uniqueUploadedFiles = (getFilesUploadedByUser(user) + getUploadedFilesFromAssaysReadableByUser(user))
-        uniqueUploadedFiles as List
-
+        (getFilesUploadedByUser(user) + getUploadedFilesFromAssaysWritableByUser(user)).unique()
     }
 
     def deleteUploadedFile(UploadedFile uploadedFile) {
+
         //TODO: when services work in Mongo objects, move logic to beforeDelete (or override delete())
         gridFS.remove(new ObjectId(uploadedFile.gridFSFile_id))
         uploadedFile.delete()
-
     }
 }
