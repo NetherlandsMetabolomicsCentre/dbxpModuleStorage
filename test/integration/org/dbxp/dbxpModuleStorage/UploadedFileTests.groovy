@@ -18,7 +18,7 @@ class UploadedFileTests extends GroovyTestCase {
         uploadedFile = UploadedFile.findByFileName(fileName)
         if (!uploadedFile) {
             println 'creating new UploadedFile'
-            uploadedFile = uploadedFileService.createUploadedFileFromFile(new File(filePath))
+            uploadedFile = uploadedFileService.createUploadedFileFromFile(new File(filePath), null)
         }
 
         assert uploadedFile
@@ -34,9 +34,7 @@ class UploadedFileTests extends GroovyTestCase {
 
         uploadedFile.parsedFile?.delete()
 
-//        assert uploadedFile.parse([delimiter: '\t']) // won't work because of mongo services bug
-
-        uploadedFile.parsedFile = parsedFileService.parseUploadedFile(uploadedFile, [delimiter: '\t'])
+        assert uploadedFile.parse([delimiter: '\t'])
 
         uploadedFile.save(failOnError: true, flush: true)
 

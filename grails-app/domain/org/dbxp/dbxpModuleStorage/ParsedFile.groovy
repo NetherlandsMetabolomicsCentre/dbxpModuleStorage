@@ -5,14 +5,12 @@ class ParsedFile {
     def dateCreated
     def lastUpdated
 
+    static belongsTo = [uploadedFile: UploadedFile]
+
     // a 2D matrix containing the parsed data as strings. Matrix[0] gives first
     // row, Matrix[0][0] give first cell of that row.
     def matrix
 
-    // index of the row where the header is located
-//    Integer headerRowIndex = 0
-
-    // TODO: should feature row be implemented? How to combine with header row?
     Integer featureRowIndex = 0
 
     // index of the column containing the sample names
@@ -26,13 +24,9 @@ class ParsedFile {
     // via REST calls)
     Integer[] ignoredDataColumns = []
 
-    //TODO: this is not generic enough, should be replaced by dynamic mongo property after mongo bug fixes
-    def amountOfSamplesWithData = 0
-
     Map parseInfo
 
     Boolean isColumnOriented = false
 
     static mapWith = "mongo"
-
 }

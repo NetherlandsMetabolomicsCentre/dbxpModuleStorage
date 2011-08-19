@@ -1,8 +1,8 @@
 package org.dbxp.dbxpModuleStorage
 
-import org.dbxp.moduleBase.User
-import org.dbxp.moduleBase.Assay
 import com.mongodb.gridfs.GridFSDBFile
+import org.dbxp.moduleBase.Assay
+import org.dbxp.moduleBase.User
 
 class UploadedFile {
 
@@ -11,15 +11,13 @@ class UploadedFile {
 
     static transients = ['uploadedFileService', 'parsedFileService', 'file', 'inputStream', 'byteArrayOutputStream', 'bytes']
     static mapWith = 'mongo'
-    static embedded = ['parsedFile']
 
-    // parsedFile will be null when fileType == '' or fileType == 'unknown'
-    ParsedFile parsedFile
+    static hasOne = [parsedFile: ParsedFile]
 
     Date dateCreated
     Date lastUpdated
 
-    User uploader // the 'owner' of the file. The keyword 'owner' is reserved in some database systems. TODO: change mapping instead
+    User uploader // user who uploaded the file
 
     // This is a hex string representing a Mongo ObjectId
     String gridFSFile_id
@@ -27,25 +25,7 @@ class UploadedFile {
     String fileName
     Long fileSize
 
-    /**
-     * TODO: change to enum? Or remove completely?
-     * File type can be any of
-     * '':                      default, meaning not yet determined
-     * 'unknown':               not parsable, ie. when auto-detection failed
-     * 'delimited_tab':         tab delimited
-     * 'delimited_comma':       comma separated values, csv
-     * 'delimited_semicolon':   european style csv
-     * 'xls':                   pre-office 2007 excel spreadsheet
-     * 'xlsx':                  Office Open XML
-     *
-     * more to come in the future
-     */
-    String fileType = ''
-
     Assay assay
-
-    //TODO: this is not generic enough, should be replaced by dynamic mongo property after mongo bug fixes
-    Long platformVersionId = 0
 
     static constraints = {
         uploader    (nullable: true)
@@ -54,8 +34,7 @@ class UploadedFile {
     }
 
     GridFSDBFile getFile() {
-        throw new Exception("This method does not work because of a bug in MongoDB GORM where services do not get injected into mongo entities that are loaded from the database.")
-//        uploadedFileService.getGridFSDBFileByID(gridFSFile_id)
+        uploadedFileService.getGridFSDBFileByID(gridFSFile_id)
     }
 
     InputStream getInputStream() {
@@ -70,8 +49,13 @@ class UploadedFile {
         byteArrayOutputStream?.toByteArray()
     }
 
-    ParsedFile parse(Map hints = [:]) {
-        throw new Exception("This method does not work because of a bug in MongoDB GORM where services do not get injected into mongo entities that are loaded from the database.")
-//        parsedFile = parsedFileService.parseUploadedFile(this, hints)
+    void parse(Map hints = [:]) {
+        this.parsedFile = parsedFileService.parseUploadedFile(this, hints)
+        this.parsedFile.uploadedFile = this
+        parsedFile.save(failOnError: true)
+    }
+
+    void delete() {
+        uploadedFileService.deleteUploadedFile(this)
     }
 }

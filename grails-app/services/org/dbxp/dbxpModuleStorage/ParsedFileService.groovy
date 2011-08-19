@@ -1,7 +1,7 @@
 package org.dbxp.dbxpModuleStorage
 
-import org.dbxp.moduleBase.Sample
 import org.dbxp.matriximporter.MatrixImporter
+import org.dbxp.moduleBase.Sample
 
 class ParsedFileService {
 
@@ -19,11 +19,9 @@ class ParsedFileService {
      */
     ParsedFile parseUploadedFile(UploadedFile uploadedFile, Map hints = [:]) {
 
-        // This is a temporary solution until services work again in mongo domain objects
-        def inputStream = uploadedFileService.getGridFSDBFileByID(uploadedFile.gridFSFile_id).inputStream
+        def inputStream = uploadedFile.file.inputStream
 
         def (matrix, parseInfo) = MatrixImporter.instance.importInputStream(inputStream, hints + [fileName: uploadedFile.fileName], true)
-//        def matrix = MatrixImporter.instance.importInputStream(uploadedFile.inputStream, hints + [fileName: uploadedFile.fileName])
 
         if (!matrix) {
             throw new RuntimeException("Error parsing file ${uploadedFile.fileName}; resulting data matrix is empty.")

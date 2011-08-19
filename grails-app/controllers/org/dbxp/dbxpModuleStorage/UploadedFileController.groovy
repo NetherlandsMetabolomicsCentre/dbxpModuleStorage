@@ -31,7 +31,7 @@ class UploadedFileController {
 			// check if user may delete this file
 			if (uploadedFile.uploader.id == session.user.id || session.user.isAdministrator) {
 				// user may delete
-                uploadedFileService.deleteUploadedFile(uploadedFile)
+                uploadedFile.delete()
 
 				render ([status: 200, message: "The file '${fileName}' was deleted"] as JSON)
 			} else {
@@ -40,7 +40,7 @@ class UploadedFileController {
 			}
 		} catch (Exception e) {
 			// something went wrong deleting the file :S
-			render ([status: 500, message: "An error occured while trying to delete '${fileName}' (${e.getMessage()}"] as JSON)
+			render ([status: 500, message: "An error occurred while trying to delete '${fileName}' (${e.getMessage()}"] as JSON)
 		}
     }
 
@@ -48,7 +48,7 @@ class UploadedFileController {
         UploadedFile uploadedFile = UploadedFile.get(params.fileId)
         if (!uploadedFile) response.sendError(404, "No uploaded file could be found matching id: ${params.fileId}.")
 
-        GridFSFile gridFSFile = uploadedFileService.getGridFSDBFileByID(uploadedFile.gridFSFile_id)
+        GridFSFile gridFSFile = uploadedFile.file
         if (!gridFSFile) response.sendError(404, "No file attached to UploadedFile")
 
 		response.setStatus(200)

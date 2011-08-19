@@ -1,11 +1,10 @@
 package org.dbxp.dbxpModuleStorage
 
-import org.dbxp.moduleBase.User
-
 import com.mongodb.gridfs.GridFS
 import com.mongodb.gridfs.GridFSDBFile
 import com.mongodb.gridfs.GridFSInputFile
 import org.bson.types.ObjectId
+import org.dbxp.moduleBase.User
 import org.springframework.beans.factory.InitializingBean
 
 class UploadedFileService implements InitializingBean {
@@ -101,8 +100,8 @@ class UploadedFileService implements InitializingBean {
 
     def deleteUploadedFile(UploadedFile uploadedFile) {
 
-        //TODO: when services work in Mongo objects, move logic to beforeDelete (or override delete())
         gridFS.remove(new ObjectId(uploadedFile.gridFSFile_id))
+        uploadedFile.parsedFile.delete()
         uploadedFile.delete()
     }
 }
