@@ -1,7 +1,7 @@
 package org.dbxp.dbxpModuleStorage
 
-import org.dbxp.moduleBase.Sample
 import org.dbxp.moduleBase.Assay
+import org.dbxp.moduleBase.Sample
 
 class RestService {
 
@@ -43,7 +43,7 @@ class RestService {
         ParsedFile parsedFile = UploadedFile.findByAssay(assay)?.parsedFile
 
         if (!parsedFile) {
-            response.sendError(400, "Assay with token: \"$params.assayToken\" has no measurement data.")
+            response.sendError(400, "Assay with token: \"$assay.assayToken\" has no measurement data.")
             return
         }
 
@@ -52,7 +52,8 @@ class RestService {
 
     def ArrayList getMeasurements(params, response) {
 
-        def parsedFile = getParsedFileOrSendError(params, response)
+        def assay = getAssayOrSendError(params, response)
+        def parsedFile = getParsedFileOrSendError(assay, response)
 
         parsedFileService.getFeatureNames parsedFile
     }
