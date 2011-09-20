@@ -7,7 +7,7 @@ class RestService {
 
     static transactional = false
 
-    def parsedFileService
+    def uploadedFileService
     def synchronizationService
 
     /**
@@ -20,7 +20,6 @@ class RestService {
     def Assay getAssayOrSendError(params, response) {
 
         def assay = synchronizationService.determineClassFor('Assay').findByAssayToken(params.assayToken)
-//        def assay = Assay.findByAssayToken(params.assayToken)
 
         if (!assay) {
             response.sendError(400, "No assay with token: \"$params.assayToken\" could be found.")
@@ -31,48 +30,48 @@ class RestService {
     }
 
     /**
-     * Tries to get the parsed file for the assay requested via params.assayToken. Sends a 400 (Bad Request) if it can't
+     * Tries to get the uploaded file for the assay requested via params.assayToken. Sends a 400 (Bad Request) if it can't
      * be found.
      *
      * @param params the params map containing the assayToken
      * @param response the response used to send an error code if needed
      * @return The requested assay
      */
-    def ParsedFile getParsedFileOrSendError(assay, response) {
+    UploadedFile getUploadedFileOrSendError(assay, response) {
 
-        ParsedFile parsedFile = UploadedFile.findByAssay(assay)?.parsedFile
+        UploadedFile uploadedFile = UploadedFile.findByAssay(assay)
 
-        if (!parsedFile) {
+        if (!uploadedFile?.matrix) {
             response.sendError(400, "Assay with token: \"$assay.assayToken\" has no measurement data.")
             return
         }
 
-        parsedFile
+        uploadedFile
     }
 
-    def ArrayList getMeasurements(params, response) {
+    ArrayList getMeasurements(params, response) {
 
         def assay = getAssayOrSendError(params, response)
-        def parsedFile = getParsedFileOrSendError(assay, response)
+        def uploadedFile = getUploadedFileOrSendError(assay, response)
 
-        parsedFileService.getFeatureNames parsedFile
+        uploadedFileService.getFeatureNames uploadedFile
     }
 
-    def ArrayList getMeasurementData(params, response) {
+    ArrayList getMeasurementData(params, response) {
 
         def assay = getAssayOrSendError(params, response)
-        def parsedFile = getParsedFileOrSendError(assay, response)
+        def uploadedFile = getUploadedFileOrSendError(assay, response)
 
-        def sampleTokens                = getSampleTokensForSamplesWithData(parsedFile, params.sampleTokens)
+        def sampleTokens                = getSampleTokensForSamplesWithData(uploadedFile, params.sampleTokens)
         def requestedMeasurementTokens  = params.measurementToken instanceof String ? [params.measurementToken] : params.measurementToken
-        def measurementTokens           = parsedFileService.getFeatureNames(parsedFile).findAll { it in requestedMeasurementTokens }
-        def measurements                = parsedFileService.getDataForSamplesTokensAndMeasurementTokens(parsedFile, sampleTokens, measurementTokens).transpose().flatten()
+        def measurementTokens           = uploadedFileService.getFeatureNames(uploadedFile).findAll { it in requestedMeasurementTokens }
+        def measurements                = uploadedFileService.getDataForSamplesTokensAndMeasurementTokens(uploadedFile, sampleTokens, measurementTokens).transpose().flatten()
 
         [sampleTokens, measurementTokens, measurements]
     }
 
     /**
-     * Return sample tokens from an assay that have a corresponding sample name entry in the connected parsedFile
+     * Return sample tokens from an assay that have a corresponding sample name entry in the connected uploadedFile
      * instance. If requestedSampleTokens is non empty, only those sampleTokens matching the requestedSampleTokens are
      * returned.
      *
@@ -80,9 +79,9 @@ class RestService {
      * @param requestedSampleTokens
      * @return
      */
-    ArrayList getSampleTokensForSamplesWithData(ParsedFile parsedFile, ArrayList requestedSampleTokens = null) {
+    ArrayList getSampleTokensForSamplesWithData(UploadedFile uploadedFile, ArrayList requestedSampleTokens = null) {
 
-        def sampleNames = parsedFileService.getSampleNames(parsedFile)
+        def sampleNames = uploadedFileService.getSampleNames(uploadedFile)
         def sampleTokens = Sample.findAllByNameInList(sampleNames)*.sampleToken
 
         if (requestedSampleTokens)

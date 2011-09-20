@@ -2,7 +2,6 @@ package org.dbxp.dbxpModuleStorage
 
 class UploadedFileTests extends GroovyTestCase {
 
-    def parsedFileService
     def uploadedFileService
 
     String fileName = 'DiogenesMockData_mini.txt'
@@ -32,21 +31,19 @@ class UploadedFileTests extends GroovyTestCase {
 
     void testImport() {
 
-        uploadedFile.parsedFile?.delete()
-
         assert uploadedFile.parse([delimiter: '\t'])
 
         uploadedFile.save(failOnError: true, flush: true)
 
-        assert uploadedFile.parsedFile
+        assert uploadedFile.matrix
 
     }
 
     void testParsedDataIsStored() {
 
-        assert uploadedFile.parsedFile
+        assert uploadedFile.matrix
 
-        def someData = parsedFileService.getDataFromColumn(uploadedFile.parsedFile, 1)
+        def someData = uploadedFileService.getDataFromColumn(uploadedFile, 1)
 
         assert someData == ['803','89','523']
 
