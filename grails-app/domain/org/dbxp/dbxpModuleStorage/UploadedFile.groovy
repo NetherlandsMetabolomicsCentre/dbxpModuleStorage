@@ -70,14 +70,14 @@ class UploadedFile {
 	 */
 	def getRating() {
 		def maxPoints = 5
-		def points = 0
+		def points
 
 		// 1 : file is attached to a study
 		// 2 : file is attach to a(n) assay(s)
 		points = (this.assay) ? 2 : 0
 
 		// 3 : all samples are recognized
-		points = (points == 2 && this.parsedFile && this.assay?.samples.count() == this.determineAmountOfSamplesWithData()) ? 3 : 2
+		points = (points == 2 && this.parsedFile && this.assay?.samples?.size() == this.determineAmountOfSamplesWithData()) ? 3 : 2
 
 		// 4 : all features are recognized
 		// TODO
@@ -91,7 +91,7 @@ class UploadedFile {
 
 	def determineAmountOfSamplesWithData() {
 		def sampleNamesInFile = parsedFileService.getSampleNames(this?.parsedFile)
-		def samplesInAssay = this?.assay ? this.assay.samples : []
+		def samplesInAssay = Assay.get(this.assay?.id)?.samples
 		def sampleNamesInAssay = samplesInAssay*.name
 		sampleNamesInAssay.intersect(sampleNamesInFile).size()
 	}
