@@ -21,7 +21,24 @@ class UploadedFileController {
         render([fileName: uploadedFile.fileName, fileSize: uploadedFile.fileSize, fileId: uploadedFile.id] as JSON)
     }
 
-    def deleteUploadedFile = {
+    def deleteAllUploadedFilesForCurrentUser = {
+		def files, count
+		if (grails.util.GrailsUtil.environment == 'development') {
+			files = uploadedFileService.getUploadedFilesForUser(session.user)
+			count = files.size()
+
+			// iterate through files
+			files.each { uploadedFile ->
+				uploadedFile.delete()
+			}
+
+			render ([status: 200, message: "${count} files deleted"] as JSON)
+		} else {
+			response.sendError(405, "this functionality is not available")
+		}
+	}
+
+	def deleteUploadedFile = {
 		def fileName 	= request.getHeader('X-File-Name')
 		def fileId 		= request.getHeader('X-File-Id')
 		def uploadedFile= UploadedFile.get(fileId)
