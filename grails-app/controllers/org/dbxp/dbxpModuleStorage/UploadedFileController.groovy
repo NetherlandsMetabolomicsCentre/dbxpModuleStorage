@@ -27,8 +27,11 @@ class UploadedFileController {
 
 		// make sure this functionality is only used in the grails
 		// environment configured in Config.groovy
-	    println ConfigurationHolder.config.development.bar
+	    println "cfg:"
+		println ConfigurationHolder.config.development.bar
+		println "env:"
 		println grails.util.GrailsUtil.environment
+
 		if ((ConfigurationHolder.config.development.bar).contains(grails.util.GrailsUtil.environment)) {
 			files = uploadedFileService.getUploadedFilesForUser(session.user)
 			count = files.size()
