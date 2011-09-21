@@ -2,6 +2,7 @@ package org.dbxp.dbxpModuleStorage
 
 import com.mongodb.gridfs.GridFSFile
 import grails.converters.JSON
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 class UploadedFileController {
 	static final int BUFF_SIZE = 100000;
@@ -23,7 +24,10 @@ class UploadedFileController {
 
     def deleteAllUploadedFilesForCurrentUser = {
 		def files, count
-		if (grails.util.GrailsUtil.environment == 'development') {
+
+		// make sure this functionality is only used in the grails
+		// environment configured in Config.groovy
+		if ((ConfigurationHolder.config.development.bar).contains(grails.util.GrailsUtil.environment)) {
 			files = uploadedFileService.getUploadedFilesForUser(session.user)
 			count = files.size()
 
