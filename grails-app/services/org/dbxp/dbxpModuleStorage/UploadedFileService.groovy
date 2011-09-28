@@ -99,43 +99,13 @@ class UploadedFileService {
 		(getFilesUploadedByUser(user) + getUploadedFilesFromAssaysWritableByUser(user)).unique()
 	}
 
+	List getUnassignedUploadedFilesForUser(user) {
+		getUploadedFilesForUser(user).findAll {!it.assay?.id}
+	}
+
 	def deleteUploadedFile(UploadedFile uploadedFile) {
 		this.getGridFS().remove(new ObjectId(uploadedFile.gridFSFile_id))
 		uploadedFile.delete()
-	}
-
-	/**
-	 * Parses contents of an GridFS file.
-	 * The method checks whether all rows are equally long and whether the dimensions exceed 2x2.
-	 *
-	 * @param uploadedFile
-	 * @param hints
-	 * @return
-	 */
-	UploadedFile parseUploadedFile(UploadedFile uploadedFile, Map hints = [:]) {
-		def inputStream = uploadedFile.file.inputStream
-		def (matrix, parseInfo) = MatrixImporter.instance.importInputStream(inputStream, hints + [fileName: uploadedFile.fileName], true)
-
-		if (!matrix) {
-			throw new RuntimeException("Error parsing file ${uploadedFile.fileName}; resulting data matrix is empty.")
-		}
-
-		// check whether all rows have equal length
-		if ((matrix*.size().unique()).size > 1) {
-			throw new RuntimeException("Error parsing file ${uploadedFile.fileName}; every row should have the same number of columns.")
-		}
-
-		uploadedFile.matrix = matrix
-		uploadedFile.rows = matrix.size
-		uploadedFile.columns = matrix[0].size
-		uploadedFile.parseInfo = parseInfo
-
-		// check whether dimensions are at least 2x2
-		if (uploadedFile.rows < 2 || uploadedFile.columns < 2) {
-			throw new RuntimeException("Error importing file: file should have at least two rows and two columns. Rows: $uploadedFile.rows columns: $uploadedFile.columns.")
-		}
-
-		uploadedFile
 	}
 
 	/**

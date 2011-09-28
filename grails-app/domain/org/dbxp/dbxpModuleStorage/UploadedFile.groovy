@@ -92,6 +92,13 @@ class UploadedFile {
         }
     }
 
+	void clearParsedData() {
+		matrix = []
+		rows = 0
+		columns = 0
+		parseInfo = [:]
+	}
+
     void delete() {
         uploadedFileService.deleteUploadedFile(this)
     }
