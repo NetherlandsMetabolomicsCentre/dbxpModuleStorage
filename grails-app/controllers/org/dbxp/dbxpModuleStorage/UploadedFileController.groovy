@@ -19,7 +19,13 @@ class UploadedFileController {
         def uploadedFile = uploadedFileService.handleUploadedFileWithPath("/tmp/${fileName}", session.user)
 
         // render info about stored uploaded file
-        render([fileName: uploadedFile.fileName, fileSize: uploadedFile.fileSize, fileId: uploadedFile.id] as JSON)
+        render([
+			fileName: uploadedFile.fileName,
+			fileSize: uploadedFile.fileSize,
+			fileId: uploadedFile.id,
+			fileRating: uploadedFile.rating,
+			fileModified: uploadedFile.dateCreated.time
+		] as JSON)
     }
 
     def deleteAllUploadedFilesForCurrentUser = {
