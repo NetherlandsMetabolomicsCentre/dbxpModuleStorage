@@ -164,7 +164,14 @@ class UploadedFileService {
 	 * @return
 	 */
 	ArrayList getFeatureNames(UploadedFile uploadedFile) {
-		getHeaderRow(uploadedFile)[getDataColumnIndices(uploadedFile)]
+
+		// workaround for mongo bug ...
+		def assay = org.dbxp.moduleBase.Assay.get(uploadedFile.assay.id)
+
+		def measurementPlatformFeatureLabels = assay.measurementPlatformVersion?.features*.label
+		def headerRowLabels = getHeaderRow(uploadedFile)[getDataColumnIndices(uploadedFile)]
+
+		measurementPlatformFeatureLabels.intersect(headerRowLabels)
 	}
 
 	/**
