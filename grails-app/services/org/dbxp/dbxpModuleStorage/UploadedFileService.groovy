@@ -157,8 +157,19 @@ class UploadedFileService {
 	}
 
 	/**
-	 * Returns measurement names from the header of the data matrix. The sample column and columns with indices from
-	 * uploadedFile.ignoredDataColumns are not returned.
+	 * Returns data column headers from the uploaded file.
+	 * The sample column and columns with indices from uploadedFile.ignoredDataColumns are not returned.
+	 *
+	 * @param uploadedFile
+	 * @return
+	 */
+	ArrayList getDataColumnHeaders(UploadedFile uploadedFile) {
+		getHeaderRow(uploadedFile)[getDataColumnIndices(uploadedFile)]
+	}
+
+	/**
+	 * Returns feature names from the header of the data matrix. Only names that exist in measurement platform version
+	 * will be returned
 	 *
 	 * @param uploadedFile
 	 * @return
@@ -169,7 +180,7 @@ class UploadedFileService {
 		def assay = org.dbxp.moduleBase.Assay.get(uploadedFile.assay.id)
 
 		def measurementPlatformFeatureLabels = assay.measurementPlatformVersion?.features*.label
-		def headerRowLabels = getHeaderRow(uploadedFile)[getDataColumnIndices(uploadedFile)]
+		def headerRowLabels = getDataColumnHeaders(uploadedFile)
 
 		measurementPlatformFeatureLabels.intersect(headerRowLabels)
 	}

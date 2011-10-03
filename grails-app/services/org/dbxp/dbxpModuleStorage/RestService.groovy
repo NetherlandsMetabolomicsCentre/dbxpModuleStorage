@@ -54,7 +54,7 @@ class RestService {
         def assay = getAssayOrSendError(params, response)
         def uploadedFile = getUploadedFileOrSendError(assay, response)
 
-        uploadedFileService.getFeatureNames uploadedFile
+        uploadedFileService.getDataColumnHeaders uploadedFile
     }
 
     ArrayList getMeasurementData(params, response) {
