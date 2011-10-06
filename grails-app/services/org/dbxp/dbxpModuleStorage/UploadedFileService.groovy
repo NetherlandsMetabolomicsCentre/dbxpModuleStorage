@@ -4,7 +4,6 @@ import com.mongodb.gridfs.GridFS
 import com.mongodb.gridfs.GridFSDBFile
 import com.mongodb.gridfs.GridFSInputFile
 import org.bson.types.ObjectId
-import org.dbxp.matriximporter.MatrixImporter
 import org.dbxp.moduleBase.User
 import org.dbxp.moduleBase.Sample
 
@@ -182,7 +181,7 @@ class UploadedFileService {
 		def measurementPlatformFeatureLabels = assay.measurementPlatformVersion?.features*.label
 		def headerRowLabels = getDataColumnHeaders(uploadedFile)
 
-		measurementPlatformFeatureLabels.intersect(headerRowLabels)
+		measurementPlatformFeatureLabels?.intersect(headerRowLabels) ?: []
 	}
 
 	/**

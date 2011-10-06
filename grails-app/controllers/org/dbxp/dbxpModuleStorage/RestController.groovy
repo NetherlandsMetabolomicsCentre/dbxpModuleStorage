@@ -24,7 +24,7 @@ class RestController extends org.dbxp.moduleBase.RestController {
 
         def measurements = restService.getMeasurements(params,response)
 
-        render measurements as JSON
+        render ((measurements ?: []) as JSON)
 	}
 
 	/**
