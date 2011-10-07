@@ -149,4 +149,11 @@ class UploadedFile {
 		def sampleNamesInAssay = samplesInAssay*.name
 		sampleNamesInAssay.intersect(sampleNamesInFile).size()
 	}
+
+    def getDataColumnHeaders() {
+
+        uploadedFileService = new UploadedFileService()
+
+        uploadedFileService.getDataColumnHeaders(this)
+    }
 }
