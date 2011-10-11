@@ -59,7 +59,9 @@ class RestService {
 		println "requestedMeasurementTokens: $requestedMeasurementTokens"
         def measurementTokens           = uploadedFileService.getDataColumnHeaders(uploadedFile).findAll { it in requestedMeasurementTokens }
 		println "measurementTokens: $measurementTokens"
-        def measurements                = uploadedFileService.getDataForSamplesTokensAndMeasurementTokens(uploadedFile, sampleTokens, measurementTokens).transpose().flatten()
+		println "A: ${uploadedFileService.getDataForSamplesTokensAndMeasurementTokens(uploadedFile, sampleTokens, measurementTokens)}"
+		def measurements                = uploadedFileService.getDataForSamplesTokensAndMeasurementTokens(uploadedFile, sampleTokens, measurementTokens).transpose().flatten()
+
 		println "measurements: $measurements"
 
         [sampleTokens, measurementTokens, measurements]
