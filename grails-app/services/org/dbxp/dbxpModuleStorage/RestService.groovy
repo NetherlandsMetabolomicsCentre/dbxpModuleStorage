@@ -48,10 +48,19 @@ class RestService {
         def uploadedFile = UploadedFile.findByAssay(assay)
 		if (!uploadedFile) return []
 
+		println "DEBUG INFO for getMeasurementData"
+		println "assay:	$assay"
+		println "uploaded file: $uploadedFile"
+
+
         def sampleTokens                = getSampleTokensForSamplesWithData(uploadedFile, params.sampleTokens)
+		println "sampleTokens: $sampleTokens"
         def requestedMeasurementTokens  = params.measurementToken instanceof String ? [params.measurementToken] : params.measurementToken
+		println "requestedMeasurementTokens: $requestedMeasurementTokens"
         def measurementTokens           = uploadedFileService.getDataColumnHeaders(uploadedFile).findAll { it in requestedMeasurementTokens }
+		println "measurementTokens: $measurementTokens"
         def measurements                = uploadedFileService.getDataForSamplesTokensAndMeasurementTokens(uploadedFile, sampleTokens, measurementTokens).transpose().flatten()
+		println "measurements: $measurements"
 
         [sampleTokens, measurementTokens, measurements]
     }
