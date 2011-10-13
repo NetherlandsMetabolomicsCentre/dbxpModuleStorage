@@ -256,7 +256,7 @@ class UploadedFileService {
 	 * @param measurementTokens
 	 * @return
 	 */
-	ArrayList getDataForSamplesTokensAndMeasurementTokens(UploadedFile uploadedFile, sampleTokens, measurementTokens) {
+	ArrayList getDataForSampleTokensAndMeasurementTokens(UploadedFile uploadedFile, sampleTokens, measurementTokens) {
 		def sampleNames = Sample.findAllBySampleTokenInList(sampleTokens)*.name
 		def rowIndices = getRowIndicesForSampleNamesRelativeToDataStart(uploadedFile, sampleNames)
 
