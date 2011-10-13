@@ -230,6 +230,13 @@ class UploadedFileService {
 	}
 
 	/**
+	 * Same as getRowIndicesForSampleNames but returns indices relative to data start
+	 */
+	ArrayList getRowIndicesForSampleNamesRelativeToDataStart(UploadedFile uploadedFile, sampleNames) {
+		getRowIndicesForSampleNames(uploadedFile, sampleNames).collect { it - uploadedFile.featureRowIndex - 1 }
+	}
+
+	/**
 	 * Returns data for specific samples
 	 *
 	 * @param UploadedFile
@@ -237,8 +244,8 @@ class UploadedFileService {
 	 * @return
 	 */
 	ArrayList getDataForSampleNames(UploadedFile uploadedFile, sampleNames) {
-		def rows = getRowIndicesForSampleNames(uploadedFile, sampleNames)
-		getMeasurementData(uploadedFile)[rows]
+		def rowIndices = getRowIndicesForSampleNamesRelativeToDataStart(uploadedFile, sampleNames)
+		getMeasurementData(uploadedFile)[rowIndices]
 	}
 
 	/**
@@ -251,9 +258,9 @@ class UploadedFileService {
 	 */
 	ArrayList getDataForSamplesTokensAndMeasurementTokens(UploadedFile uploadedFile, sampleTokens, measurementTokens) {
 		def sampleNames = Sample.findAllBySampleTokenInList(sampleTokens)*.name
-		def rows = getRowIndicesForSampleNames(uploadedFile, sampleNames)
+		def rowIndices = getRowIndicesForSampleNamesRelativeToDataStart(uploadedFile, sampleNames)
 
-		getDataForMeasurementTokens(uploadedFile, measurementTokens).transpose()[rows]
+		getDataForMeasurementTokens(uploadedFile, measurementTokens).transpose()[rowIndices]
 	}
 
 	UploadedFile transposeMatrix(UploadedFile uploadedFile) {
