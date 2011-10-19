@@ -3,6 +3,7 @@ package org.dbxp.dbxpModuleStorage
 import com.mongodb.gridfs.GridFSFile
 import grails.converters.JSON
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
+import org.dbxp.moduleBase.Assay
 
 class UploadedFileController {
 	static final int BUFF_SIZE = 100000;
@@ -17,6 +18,10 @@ class UploadedFileController {
 
         // assume files are stored in '/tmp' for now
         def uploadedFile = uploadedFileService.handleUploadedFileWithPath("/tmp/${fileName}", session.user)
+
+		// set the assay already if specified
+		uploadedFile.assay = Assay.get(params.id)
+		uploadedFile.save()
 
         // render info about stored uploaded file
         render([
