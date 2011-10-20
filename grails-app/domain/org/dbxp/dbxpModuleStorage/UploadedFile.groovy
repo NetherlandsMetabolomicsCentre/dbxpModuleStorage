@@ -103,36 +103,6 @@ class UploadedFile {
         uploadedFileService.deleteUploadedFile(this)
     }
 
-	/**
-	 * Rating calculation:
-	 * 0 = file is uploaded (exists)
-	 * 1 = file is attached to a study
-	 * 2 = file is attached to assays
-	 * 3 = all samples are recognized
-	 * 4 = all features are recognized
-	 * 5 = study is public
-	 */
-	def getRating() {
-		def maxPoints = 5
-		def points
-
-		// 1 : file is attached to a study
-		// 2 : file is attach to a(n) assay(s)
-		points = (assay) ? 2 : 0
-
-		// 3 : all samples are recognized
-		points = (points == 2 && matrix && assay?.samples?.size() == determineAmountOfSamplesWithData()) ? 3 : 2
-
-		// 4 : all features are recognized
-		// TODO
-
-		// 5 : study is public
-		// TODO
-
-		// calculate and return rating
-		return (points / maxPoints)
-	}
-
 	def getUploadedFileService() {
 		if (!uploadedFileService) {
 			uploadedFileService = new UploadedFileService()
@@ -141,6 +111,8 @@ class UploadedFile {
 	}
 
 	def determineAmountOfSamplesWithData() {
+
+		if (!matrix) return 0
 
 		uploadedFileService = new UploadedFileService()
 

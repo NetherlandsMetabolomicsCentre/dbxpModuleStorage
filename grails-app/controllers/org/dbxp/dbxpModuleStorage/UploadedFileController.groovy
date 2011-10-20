@@ -28,7 +28,7 @@ class UploadedFileController {
 			fileName: uploadedFile.fileName,
 			fileSize: uploadedFile.fileSize,
 			fileId: uploadedFile.id,
-			fileRating: uploadedFile.rating,
+			fileRating: 1/5, // default rating is 1 out of 5 stars if file is uploaded
 			fileModified: uploadedFile.dateCreated.time
 		] as JSON)
     }
