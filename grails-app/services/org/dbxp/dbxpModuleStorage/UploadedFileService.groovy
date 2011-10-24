@@ -178,7 +178,7 @@ class UploadedFileService {
 		// workaround for mongo bug ...
 		def assay = org.dbxp.moduleBase.Assay.get(uploadedFile.assay.id)
 
-		def measurementPlatformFeatureLabels = assay.measurementPlatformVersion?.features*.label
+		def measurementPlatformFeatureLabels = assay.measurementPlatformVersion?.features*.feature?.label
 		def headerRowLabels = getDataColumnHeaders(uploadedFile)
 
 		measurementPlatformFeatureLabels?.intersect(headerRowLabels) ?: []
