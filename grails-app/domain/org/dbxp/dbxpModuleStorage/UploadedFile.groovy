@@ -73,7 +73,7 @@ class UploadedFile {
         def (newMatrix, newParseInfo) = MatrixImporter.instance.importInputStream(inputStream, hints + [fileName: fileName], true)
 
         if (!newMatrix) {
-            throw new RuntimeException("Error parsing file $fileName; resulting data matrix is empty.")
+            throw new RuntimeException("Could not parse file $fileName. Contents are not of a type that can be read into a two-dimensional array.")
         }
 
         // check whether all rows have equal length
