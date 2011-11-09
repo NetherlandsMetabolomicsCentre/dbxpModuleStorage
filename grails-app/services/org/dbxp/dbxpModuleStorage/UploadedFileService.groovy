@@ -176,8 +176,10 @@ class UploadedFileService {
 	ArrayList getFeatureNames(UploadedFile uploadedFile) {
 
 		// workaround for mongo bug ...
-		def assay = org.dbxp.moduleBase.Assay.get(uploadedFile.assay.id)
+		def assay = org.dbxp.moduleBase.Assay.get(uploadedFile.assay?.id)
 
+		if (!assay) return []
+		
 		def measurementPlatformFeatureLabels = assay.measurementPlatformVersion?.features*.feature?.label
 		def headerRowLabels = getDataColumnHeaders(uploadedFile)
 
