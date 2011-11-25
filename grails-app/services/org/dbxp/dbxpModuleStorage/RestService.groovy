@@ -48,10 +48,15 @@ class RestService {
         def uploadedFile = UploadedFile.findByAssay(assay)
 		if (!uploadedFile) return []
 
-        def sampleTokens                = getSampleTokensForSamplesWithData(uploadedFile, params.sampleTokens)
+		def requestedSampleTokens		= params.sampleToken instanceof String ? [params.sampleToken] : params.sampleToken.toList()
+        def sampleTokens                = getSampleTokensForSamplesWithData(uploadedFile, requestedSampleTokens)
         def requestedMeasurementTokens  = params.measurementToken instanceof String ? [params.measurementToken] : params.measurementToken
-        def measurementTokens           = uploadedFileService.getDataColumnHeaders(uploadedFile).findAll { it in requestedMeasurementTokens }
-		def measurements                = uploadedFileService.getDataForSampleTokensAndMeasurementTokens(uploadedFile, sampleTokens, measurementTokens).transpose().flatten()
+		def measurementTokens 			= uploadedFileService.getDataColumnHeaders(uploadedFile)
+
+		if (requestedMeasurementTokens)
+        	measurementTokens           = measurementTokens.findAll { it in requestedMeasurementTokens }
+
+		def measurements                = uploadedFileService.getDataForSampleTokensAndMeasurementTokens(uploadedFile, sampleTokens, measurementTokens)?.transpose()?.flatten()
 
         [sampleTokens, measurementTokens, measurements]
     }
@@ -71,7 +76,7 @@ class RestService {
         def sampleTokens = Sample.findAllByNameInList(sampleNames)*.sampleToken
 
         if (requestedSampleTokens)
-            sampleTokens.findAll { it in requestedSampleTokens }
+			requestedSampleTokens.findAll { it in sampleTokens }
         else
             sampleTokens
     }

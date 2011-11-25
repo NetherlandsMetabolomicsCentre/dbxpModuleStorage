@@ -51,6 +51,7 @@ class UploadedFile {
         uploader(nullable: true)
 		matrix(nullable: true)
         assay(nullable: true)
+		parseInfo(nullable: true)
     }
 
     GridFSDBFile getFile() {
@@ -110,16 +111,20 @@ class UploadedFile {
 		uploadedFileService
 	}
 
-	def determineAmountOfSamplesWithData() {
+	def getSamplesWithData() {
 
-		if (!matrix) return 0
+		if (!matrix) return []
 
 		uploadedFileService = new UploadedFileService()
 
 		def sampleNamesInFile = uploadedFileService.getSampleNames(this)
 		def samplesInAssay = Assay.get(assay?.id)?.samples
 		def sampleNamesInAssay = samplesInAssay*.name
-		sampleNamesInAssay.intersect(sampleNamesInFile).size()
+		sampleNamesInAssay.intersect(sampleNamesInFile)
+	}
+
+	def determineAmountOfSamplesWithData() {
+		samplesWithData.size()
 	}
 
     def getDataColumnHeaders() {
