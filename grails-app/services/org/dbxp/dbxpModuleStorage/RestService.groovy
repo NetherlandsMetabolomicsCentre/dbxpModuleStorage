@@ -53,14 +53,18 @@ class RestService {
         def requestedMeasurementTokens  = params.measurementToken instanceof String ? [params.measurementToken] : params.measurementToken
 		def measurementTokens 			= uploadedFileService.getDataColumnHeaders(uploadedFile)
 
-		if (requestedMeasurementTokens)
+		if (requestedMeasurementTokens) {
         	measurementTokens           = measurementTokens.findAll { it in requestedMeasurementTokens }
+		}
 
-		def measurements                = uploadedFileService.getDataForSampleTokensAndMeasurementTokens(uploadedFile, sampleTokens, measurementTokens)?.transpose()?.flatten()
+		def measurements = []
+
+		if (measurementTokens) {
+			measurements            	= uploadedFileService.getDataForSampleTokensAndMeasurementTokens(uploadedFile, sampleTokens, measurementTokens)?.transpose()?.flatten()
+		}
 
         [sampleTokens, measurementTokens, measurements]
     }
-
     /**
      * Return sample tokens from an assay that have a corresponding sample name entry in the connected uploadedFile
      * instance. If requestedSampleTokens is non empty, only those sampleTokens matching the requestedSampleTokens are
