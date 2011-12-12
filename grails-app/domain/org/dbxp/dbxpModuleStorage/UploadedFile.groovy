@@ -87,9 +87,9 @@ class UploadedFile {
 		columns = matrix[0].size
 		parseInfo = newParseInfo
 
-        // check whether dimensions are at least 2x2
-        if (rows < 2 || columns < 2) {
-            throw new RuntimeException("Error importing file: file should have at least two rows and two columns. Rows: $rows columns: $columns.")
+        // check whether dimensions are at least 2x1
+        if (rows < 2 || columns < 1) {
+            throw new RuntimeException("Error importing file: file should have at least two rows and 1 column. Rows: $rows columns: $columns.")
         }
     }
 
