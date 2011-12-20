@@ -9,7 +9,6 @@ import org.dbxp.moduleBase.Sample
 
 class UploadedFileService {
 	static transactional = 'mongo'
-	def assayService
 
 	def grailsApplication
 	def mongoDatastore
@@ -82,26 +81,11 @@ class UploadedFileService {
 		this.getGridFS().findOne(objectId)
 	}
 
-	List getFilesUploadedByUser(user) {
-		UploadedFile.findAllByUploader(user)
-	}
-
-	List getUploadedFilesFromAssaysReadableByUser(user) {
-		UploadedFile.findAllByAssayInList(assayService.getAssaysReadableByUser(user))
-	}
-
-	List getUploadedFilesFromAssaysWritableByUser(user) {
-		UploadedFile.findAllByAssayInList(assayService.getAssaysWritableByUser(user))
-	}
-
-	List getUploadedFilesForUser(user) {
-		(getFilesUploadedByUser(user) + getUploadedFilesFromAssaysWritableByUser(user)).unique()
-	}
-
-	List getUnassignedUploadedFilesForUser(user) {
-		getUploadedFilesForUser(user).findAll {!it.assay?.id}
-	}
-
+	/**
+	 * Deletes uploaded file and attached grid fs file
+	 * @param uploadedFile
+	 * @return
+	 */
 	def deleteUploadedFile(UploadedFile uploadedFile) {
 		this.getGridFS().remove(new ObjectId(uploadedFile.gridFSFile_id))
 		uploadedFile.delete()
@@ -265,6 +249,13 @@ class UploadedFileService {
 		getDataForMeasurementTokens(uploadedFile, measurementTokens).transpose()[rowIndices]
 	}
 
+	/**
+	 * Transposes the matrix and adjusts rows, columns and isColumnOriented parameters
+	 *
+	 *
+	 * @param UploadedFile
+	 * @return
+	 */
 	UploadedFile transposeMatrix(UploadedFile uploadedFile) {
 		uploadedFile.matrix = uploadedFile.matrix.transpose()
 		uploadedFile.rows = uploadedFile.matrix.size
@@ -274,6 +265,12 @@ class UploadedFileService {
 		return uploadedFile
 	}
 
+	/**
+	 * Returns sample count for the uploaded file as indicated by the rows property and the feature row index
+	 *
+	 * @param UploadedFile
+	 * @return
+	 */
 	def sampleCount(UploadedFile uploadedFile) {
 		uploadedFile.rows - uploadedFile.featureRowIndex - 1
 	}
