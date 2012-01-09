@@ -12,6 +12,7 @@ class UploadedFileService {
 
 	def grailsApplication
 	def mongoDatastore
+	def assayService
 
 	GridFS gridFS
 
@@ -79,6 +80,26 @@ class UploadedFileService {
 
 	GridFSDBFile getGridFSDBFileByID(ObjectId objectId) {
 		this.getGridFS().findOne(objectId)
+	}
+	
+	List getFilesUploadedByUser(user) {
+		UploadedFile.findAllByUploader(user)
+	}
+
+	List getUploadedFilesFromAssaysReadableByUser(user) {
+		UploadedFile.findAllByAssayInList(assayService.getAssaysReadableByUser(user))
+	}
+
+	List getUploadedFilesFromAssaysWritableByUser(user) {
+		UploadedFile.findAllByAssayInList(assayService.getAssaysWritableByUser(user))
+	}
+
+	List getUploadedFilesForUser(user) {
+		(getFilesUploadedByUser(user) + getUploadedFilesFromAssaysWritableByUser(user)).unique()
+	}
+
+	List getUnassignedUploadedFilesForUser(user) {
+		getUploadedFilesForUser(user).findAll {!it.assay?.id}
 	}
 
 	/**
