@@ -17,20 +17,25 @@ class UploadedFileController {
 		def fileName = request.getHeader('X-File-Name')
 
         // assume files are stored in '/tmp' for now
-        def uploadedFile = uploadedFileService.handleUploadedFileWithPath("/tmp/${fileName}", session.user)
+        try {
+			def uploadedFile = uploadedFileService.handleUploadedFileWithPath("/tmp/${fileName}", session.user)
 
-		// set the assay already if specified
-		uploadedFile.assay = Assay.get(params.id)
-		uploadedFile.save()
+			// set the assay already if specified
+			uploadedFile.assay = Assay.get(params.id)
+			uploadedFile.save()
 
-        // render info about stored uploaded file
-        render([
-			fileName: uploadedFile.fileName,
-			fileSize: uploadedFile.fileSize,
-			fileId: uploadedFile.id,
-			fileRating: uploadedFile.assay ? 2/5 : 1/5,
-			fileModified: uploadedFile.dateCreated.time
-		] as JSON)
+			// render info about stored uploaded file
+			render([
+				fileName: uploadedFile.fileName,
+				fileSize: uploadedFile.fileSize,
+				fileId: uploadedFile.id,
+				fileRating: uploadedFile.assay ? 2/5 : 1/5,
+				fileModified: uploadedFile.dateCreated.time
+			] as JSON)
+		} catch (Exception e) {
+			// whoops, something went wrong?
+			response.sendError(500, e.getMessage())
+		}
     }
 
     def deleteAllUploadedFilesForCurrentUser = {

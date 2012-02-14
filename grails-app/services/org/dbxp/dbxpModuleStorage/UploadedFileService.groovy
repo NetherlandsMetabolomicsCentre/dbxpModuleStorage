@@ -71,6 +71,7 @@ class UploadedFileService {
 		try {
 			uploadedFile.save(failOnError: true)
 		} catch (NullPointerException e) {
+			// something is going wrong with mongodb
 			throw new Exception("UploadedFileService is unable to save and uploadedFile; make sure MongoDB is running...")
 		}
 
