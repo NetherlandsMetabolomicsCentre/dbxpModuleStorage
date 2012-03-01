@@ -68,11 +68,14 @@ class UploadedFileService {
 			fileName: file.name,
 			fileSize: file.length()
 		)
+
 		try {
 			uploadedFile.save(failOnError: true)
-		} catch (NullPointerException e) {
+		} catch (Exception e) {
 			// something is going wrong with mongodb
-			throw new Exception("UploadedFileService is unable to save and uploadedFile; make sure MongoDB is running...")
+			throw new Exception("UploadedFileService is unable to save the uploadedFile; make sure MongoDB is running...")
+//			println e.getMessage()
+//			println e.getStackTrace()
 		}
 
 		return uploadedFile
