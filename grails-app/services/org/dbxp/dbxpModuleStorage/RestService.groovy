@@ -43,6 +43,8 @@ class RestService {
 
     ArrayList getMeasurementData(params, response) {
 
+		def measurementDataResponse = []
+		
         def assay = getAssayOrSendError(params, response)
 		if (!assay) return
         def uploadedFile = UploadedFile.findByAssay(assay)
@@ -62,8 +64,32 @@ class RestService {
 		if (measurementTokens) {
 			measurements            	= uploadedFileService.getDataForSampleTokensAndMeasurementTokens(uploadedFile, sampleTokens, measurementTokens)?.transpose()?.flatten()
 		}
+		
+		// check if the param verbose is true, if so convert the response to a more verbose but redundant layout
+		if (params.verbose?.toString()?.toLowerCase() == 'true'){
+			
+			def measurementIdx = 0
+			sampleTokens.each { sampleToken ->
+				measurementTokens.each { measurementToken, labelIdx ->
+			
+	                def measurement                 = [:]
+	                measurement['sampleToken']      = sampleToken
+	                measurement['measurementToken'] = measurementToken
+	                measurement['value']            = measurements[measurementIdx]
+	
+	                measurementIdx++
+	
+	                measurementDataResponse.add(measurement)
+				}
+			}
+			
+		} else {
+			// return 3 individual lists of values
+			measurementDataResponse = [sampleTokens, measurementTokens, measurements]
+		
+		}
 
-        [sampleTokens, measurementTokens, measurements]
+        return measurementDataResponse
     }
     /**
      * Return sample tokens from an assay that have a corresponding sample name entry in the connected uploadedFile
