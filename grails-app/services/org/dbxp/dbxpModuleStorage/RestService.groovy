@@ -52,8 +52,12 @@ class RestService {
 
 		def requestedSampleTokens		= params.sampleToken instanceof String ? [params.sampleToken] : params.sampleToken?.toList()
         def sampleTokens                = getSampleTokensForSamplesWithData(uploadedFile, requestedSampleTokens)
+		def assaySampleTokens			= assay.samples?.collect {it.sampleToken} ?: []
         def requestedMeasurementTokens  = params.measurementToken instanceof String ? [params.measurementToken] : params.measurementToken
 		def measurementTokens 			= uploadedFileService.getDataColumnHeaders(uploadedFile)
+
+		// return only data from the file of samples linked to the Assay
+		sampleTokens = sampleTokens.intersect(assaySampleTokens)
 
 		if (requestedMeasurementTokens) {
         	measurementTokens           = measurementTokens.findAll { it in requestedMeasurementTokens }
