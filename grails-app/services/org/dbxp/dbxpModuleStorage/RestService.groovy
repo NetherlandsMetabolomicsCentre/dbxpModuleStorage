@@ -70,7 +70,7 @@ class RestService {
 			
 			def measurementIdx = 0
 			sampleTokens.each { sampleToken ->
-				measurementTokens.each { measurementToken, labelIdx ->
+				measurementTokens.each { measurementToken ->
 			
 	                def measurement                 = [:]
 	                measurement['sampleToken']      = sampleToken
