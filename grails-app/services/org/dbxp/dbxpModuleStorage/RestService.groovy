@@ -38,6 +38,8 @@ class RestService {
 
 		if (!uploadedFile) return []
 
+	    // TODO: if a platform is defined, only return measurements that are contained in the platform
+
         uploadedFileService.getDataColumnHeaders uploadedFile
     }
 
@@ -53,13 +55,18 @@ class RestService {
 		def requestedSampleTokens		= params.sampleToken instanceof String ? [params.sampleToken] : params.sampleToken?.toList()
         def sampleTokens                = getSampleTokensForSamplesWithData(uploadedFile, requestedSampleTokens)
 		def assaySampleTokens			= assay.samples?.collect {it.sampleToken} ?: []
-        def requestedMeasurementTokens  = params.measurementToken instanceof String ? [params.measurementToken] : params.measurementToken
-		def measurementTokens 			= uploadedFileService.getDataColumnHeaders(uploadedFile)
+		def requestedMeasurementTokens  = []
+	    if (params.measurementToken) {
+	        requestedMeasurementTokens  = params.measurementToken instanceof String ? [params.measurementToken] : params.measurementToken
+	    }
+		// get all measurements from file header
+	    def measurementTokens 			= uploadedFileService.getDataColumnHeaders(uploadedFile)
 
-		// return only data from the file of samples linked to the Assay
+	    // return only data from the file of samples linked to the Assay
 		sampleTokens = sampleTokens.intersect(assaySampleTokens)
 
-		if (requestedMeasurementTokens) {
+	    // by default, use all measurements, otherwise, filter for the requested tokens
+	    if (requestedMeasurementTokens) {
         	measurementTokens           = measurementTokens.findAll { it in requestedMeasurementTokens }
 		}
 
@@ -90,7 +97,6 @@ class RestService {
 		} else {
 			// return 3 individual lists of values
 			measurementDataResponse = [sampleTokens, measurementTokens, measurements]
-		
 		}
 
         return measurementDataResponse
