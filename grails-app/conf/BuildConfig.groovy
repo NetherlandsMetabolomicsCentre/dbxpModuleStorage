@@ -30,6 +30,10 @@ grails.project.dependency.resolution = {
 
         // runtime 'mysql:mysql-connector-java:5.1.13'
     }
+	plugins {
+		compile ':matrix-importer:0.2.3.5'
+		compile ':dbxp-module-base:0.4.17'
+	}
 }
 //grails.plugin.location.'matrixImporter' = '../matrixImporter'
 //grails.plugin.location.'dbxpModuleBase' = '../dbxpModuleBase'
