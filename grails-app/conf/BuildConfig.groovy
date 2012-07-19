@@ -31,8 +31,21 @@ grails.project.dependency.resolution = {
         // runtime 'mysql:mysql-connector-java:5.1.13'
     }
 	plugins {
+
+
+		compile ":hibernate:$grailsVersion"
+		compile ":tomcat:$grailsVersion"
+
+		compile ':jquery:1.7.1'
+		compile ':jquery-datatables:1.7.5'
+		compile ':jquery-ui:1.8.15'
+		compile ':famfamfam:1.0.1'
+		compile ':resources:1.1.1'
+
+		compile ':mongodb:1.0.0.RC3'
+
 		compile ':matrix-importer:0.2.3.5'
-		compile ':dbxp-module-base:0.4.17'
+		compile ':dbxp-module-base:0.4.20'
 	}
 }
 //grails.plugin.location.'matrixImporter' = '../matrixImporter'
