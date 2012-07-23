@@ -31,21 +31,29 @@ grails.project.dependency.resolution = {
         // runtime 'mysql:mysql-connector-java:5.1.13'
     }
 	plugins {
+		build(  ":tomcat:$grailsVersion",
+				":release:latest.integration",
+				":rest-client-builder:latest.integration"
+		) {
+			// plugin only plugin, should not be transitive to the application
+			export = false
+		}
 
-
-		compile ":hibernate:$grailsVersion"
-		compile ":tomcat:$grailsVersion"
-
-		compile ':jquery:1.7.1'
-		compile ':jquery-datatables:1.7.5'
-		compile ':jquery-ui:1.8.15'
-		compile ':famfamfam:1.0.1'
-		compile ':resources:1.1.1'
-
-		compile ':mongodb:1.0.0.RC3'
-
-		compile ':matrix-importer:0.2.3.5'
-		compile ':dbxp-module-base:0.4.20'
+		compile(
+				":hibernate:$grailsVersion",
+				":tomcat:$grailsVersion",
+				':jquery:1.7.1',
+				':jquery-datatables:1.7.5',
+				':jquery-ui:1.8.15',
+				':famfamfam:1.0.1',
+				':resources:1.1.1',
+				':mongodb:1.0.0.RC3',
+				':matrix-importer:0.2.3.5',
+				':dbxp-module-base:0.5.0'
+		) {
+			// no need to export the plugins to application (dependencies are declared in plugin descriptor file)
+			export = false
+		}
 	}
 }
 //grails.plugin.location.'matrixImporter' = '../matrixImporter'

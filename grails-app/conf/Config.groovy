@@ -25,3 +25,5 @@ log4j = {
 
 // Default to throw exception on failed save (tests don't respect this setting)
 grails.gorm.failOnError = true
+grails.views.default.codec="none" // none, html, base64
+grails.views.gsp.encoding="UTF-8"

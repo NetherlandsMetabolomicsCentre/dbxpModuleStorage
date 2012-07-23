@@ -4,6 +4,8 @@
 .settings
 eclipse
 stacktrace.log
+plugin.xml
+grails-dbxp-module-storage*
 target
 /plugins
 /web-app/plugins
