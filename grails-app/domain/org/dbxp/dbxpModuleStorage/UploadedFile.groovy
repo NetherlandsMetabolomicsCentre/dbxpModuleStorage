@@ -104,6 +104,7 @@ class UploadedFile {
         uploadedFileService.deleteUploadedFile(this)
     }
 
+	// TODO: why not with dependency injection??
 	def getUploadedFileService() {
 		if (!uploadedFileService) {
 			uploadedFileService = new UploadedFileService()
@@ -124,7 +125,8 @@ class UploadedFile {
 	}
 
 	def determineAmountOfSamplesWithData() {
-		samplesWithData.size()
+		// TODO: it's very inefficient to constantly determine this on the fly
+		getSamplesWithData().size()
 	}
 
     def getDataColumnHeaders() {

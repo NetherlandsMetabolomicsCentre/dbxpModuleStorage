@@ -113,6 +113,9 @@ class RestService {
     ArrayList getSampleTokensForSamplesWithData(UploadedFile uploadedFile, ArrayList requestedSampleTokens = null) {
 
         def sampleNames = uploadedFileService.getSampleNames(uploadedFile)
+	    if (!sampleNames) {
+		    throw new IllegalArgumentException("The uploaded file for this assay does not contain any data.")
+	    }
         def sampleTokens = Sample.findAllByNameInList(sampleNames)*.sampleToken
 
         if (requestedSampleTokens)

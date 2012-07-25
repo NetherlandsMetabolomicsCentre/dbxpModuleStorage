@@ -47,7 +47,7 @@ grails.project.dependency.resolution = {
 				':jquery-ui:1.8.15',
 				':famfamfam:1.0.1',
 				':resources:1.1.1',
-				':mongodb:1.0.0.RC3',
+				':mongodb:1.0.0.GA',
 				':matrix-importer:0.2.3.5',
 				':dbxp-module-base:0.5.0'
 		) {
