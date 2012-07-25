@@ -205,9 +205,9 @@ class UploadedFileService {
 	 * @param measurementTokens
 	 * @return
 	 */
-	ArrayList getDataForMeasurementTokens(UploadedFile UploadedFile, measurementTokens) {
-		ArrayList columnIndices = getHeaderRow(UploadedFile).findIndexValues { it in measurementTokens }
-		getDataFromColumns(UploadedFile, columnIndices)
+	ArrayList getDataForMeasurementTokens(UploadedFile uploadedFile, measurementTokens) {
+		ArrayList columnIndices = getHeaderRow(uploadedFile).findIndexValues { it in measurementTokens }
+		getDataFromColumns(uploadedFile, columnIndices)
 	}
 
 	/**
@@ -235,6 +235,32 @@ class UploadedFileService {
 	/**
 	 * Retrieves row indices that belong to given sample names.
 	 *
+	 * @param UploadedFile
+	 * @param sampleNames
+	 * @return
+	 */
+	ArrayList getColumnIndicesForMeasurementTokens(UploadedFile uploadedFile, List measurementTokens) {
+		measurementTokens.collect { token -> getHeaderRow(uploadedFile).findIndexOf { it in [token] } }
+	}
+
+	/**
+	 * Retrieves row indices that belong to given sample names, searching only in real data rows.
+	 *
+	 * @param UploadedFile
+	 * @param sampleNames
+	 * @return
+	 */
+	ArrayList getRowIndicesForSampleNamesInData(UploadedFile uploadedFile, sampleNames) {
+		// calculate indices relative to data start
+		def relativeIndices = sampleNames.collect { name -> uploadedFile.matrix[(uploadedFile.featureRowIndex + 1)..-1].findIndexOf { row -> row[uploadedFile.sampleColumnIndex] in [name] }}
+		// add header row count to obtain indexes that can directly be used on the data matrix
+		relativeIndices*.plus(uploadedFile.featureRowIndex + 1)
+	}
+
+
+	/**
+	 * Retrieves row indices that belong to given sample names, searching in all rows.
+	 * Is here for legacy reasons only.
 	 * @param UploadedFile
 	 * @param sampleNames
 	 * @return
@@ -270,11 +296,15 @@ class UploadedFileService {
 	 * @param measurementTokens
 	 * @return
 	 */
-	ArrayList getDataForSampleTokensAndMeasurementTokens(UploadedFile uploadedFile, sampleTokens, measurementTokens) {
-		def sampleNames = Sample.findAllBySampleTokenInList(sampleTokens)*.name
-		def rowIndices = getRowIndicesForSampleNamesRelativeToDataStart(uploadedFile, sampleNames)
-
-		getDataForMeasurementTokens(uploadedFile, measurementTokens).transpose()[rowIndices]
+	ArrayList getDataForSampleTokensAndMeasurementTokens(UploadedFile uploadedFile, List sampleTokens, List measurementTokens) {
+		// retrieve sample names for the given tokens and store them in the same order
+		List sampleNames = Sample.findAllBySampleTokenInList(sampleTokens)*.name
+		// use these names to obtain row indices
+		List rowIndices = getRowIndicesForSampleNamesInData(uploadedFile, sampleNames)
+		// obtain column indices for the given measurement 'tokens' (names)
+		List columnIndices = getColumnIndicesForMeasurementTokens(uploadedFile, measurementTokens)
+		// return the data by directly indexing the data matrix
+		uploadedFile?.matrix[rowIndices].collect { it[columnIndices] }
 	}
 
 	/**

@@ -49,7 +49,10 @@ class RestService {
 		
         def assay = getAssayOrSendError(params, response)
 		if (!assay) return
-        def uploadedFile = UploadedFile.findByAssay(assay)
+
+	    // TODO: this code is not yet adapted for assays which contain multiple data files
+
+	    def uploadedFile = UploadedFile.findByAssay(assay)
 		if (!uploadedFile) return []
 
 		def requestedSampleTokens		= params.sampleToken instanceof String ? [params.sampleToken] : params.sampleToken?.toList()
