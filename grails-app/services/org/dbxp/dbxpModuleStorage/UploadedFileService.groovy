@@ -298,7 +298,7 @@ class UploadedFileService {
 	 */
 	ArrayList getDataForSampleTokensAndMeasurementTokens(UploadedFile uploadedFile, List sampleTokens, List measurementTokens) {
 		// retrieve sample names for the given tokens and store them in the same order
-		List sampleNames = Sample.findAllBySampleTokenInList(sampleTokens)*.name
+		List sampleNames = sampleTokens.collect { Sample.findBySampleToken(it).name }
 		// use these names to obtain row indices
 		List rowIndices = getRowIndicesForSampleNamesInData(uploadedFile, sampleNames)
 		// obtain column indices for the given measurement 'tokens' (names)
